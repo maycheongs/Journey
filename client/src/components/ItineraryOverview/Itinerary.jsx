@@ -311,6 +311,7 @@ export default function Itinerary(props) {
                   isRegularNotes={regularNotes.length !== 0}
                   isFirstNote={index === 0}
                   isLastNote={index === pinnedNotes.length - 1}
+                  isPinned='true'
                 />
               );
             })}
@@ -362,16 +363,17 @@ export default function Itinerary(props) {
             regularNotes.length > 0 &&
             regularNotes.map((note, index) => {
               return (
-                <Note
-                  key={note.id}
-                  note={note}
-                  deleteTripNote={deleteTripNote}
-                  itinerary={itinerary}
-                  dispatch={dispatch}
-                  isRegularNotes={regularNotes.length !== 0}
-                  isMiddleNote={index !== regularNotes.length - 1}
-                  editTripNote={editTripNote}
-                />
+                <PinnedNote
+                key={note.id}
+                note={note}
+                deleteTripNote={deleteTripNote}
+                itinerary={itinerary}
+                dispatch={dispatch}
+                editTripNote={editTripNote}
+                isRegularNotes={regularNotes.length !== 0}
+                isFirstNote={index === 0}
+                isLastNote={index === pinnedNotes.length - 1}
+              />
               );
             })}
           {regularNotes.length === 0 && pinnedNotes.length === 0 && (
