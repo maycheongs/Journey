@@ -4,7 +4,7 @@ import { SET_BOOKMARKS } from '../../reducers/application';
 
 import ItineraryDays from './ItineraryDays';
 import AddNoteForm from './AddNoteForm';
-import PinnedNote from './PinnedNote';
+import Note from './Note';
 
 export default function Itinerary(props) {
   const {
@@ -300,7 +300,7 @@ export default function Itinerary(props) {
           {pinnedNotes.length > 0 &&
             pinnedNotes.map((note, index) => {
               return (
-                <PinnedNote
+                <Note
                   key={note.id}
                   note={note}
                   deleteTripNote={deleteTripNote}
@@ -362,7 +362,7 @@ export default function Itinerary(props) {
             regularNotes.length > 0 &&
             regularNotes.map((note, index) => {
               return (
-                <PinnedNote
+                <Note
                 key={note.id}
                 note={note}
                 deleteTripNote={deleteTripNote}

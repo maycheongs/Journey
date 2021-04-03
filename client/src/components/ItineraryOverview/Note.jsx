@@ -4,7 +4,7 @@ import { SET_ITINERARY } from '../../reducers/application';
 import EditNoteForm from './EditNoteForm';
 import DeleteConfirmation from '../DeleteConfirmation';
 
-export default function PinnedNote(props) {
+export default function Note(props) {
   const {
     note,
     deleteTripNote,
