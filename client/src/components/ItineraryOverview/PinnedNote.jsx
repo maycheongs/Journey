@@ -14,6 +14,7 @@ export default function PinnedNote(props) {
     isRegularNotes,
     isFirstNote,
     isLastNote,
+    isPinned
   } = props;
 
   const url = useLocation().pathname;
@@ -66,6 +67,7 @@ export default function PinnedNote(props) {
             className='flex items-center justify-between w-full space-x-2'
           >
             <div className='flex items-center space-x-3'>
+              {isPinned ? 
               <svg
                 aria-hidden='true'
                 focusable='false'
@@ -80,7 +82,18 @@ export default function PinnedNote(props) {
                   fill='currentColor'
                   d='M298.028 214.267L285.793 96H328c13.255 0 24-10.745 24-24V24c0-13.255-10.745-24-24-24H56C42.745 0 32 10.745 32 24v48c0 13.255 10.745 24 24 24h42.207L85.972 214.267C37.465 236.82 0 277.261 0 328c0 13.255 10.745 24 24 24h136v104.007c0 1.242.289 2.467.845 3.578l24 48c2.941 5.882 11.364 5.893 14.311 0l24-48a8.008 8.008 0 0 0 .845-3.578V352h136c13.255 0 24-10.745 24-24-.001-51.183-37.983-91.42-85.973-113.733z'
                 ></path>
-              </svg>
+              </svg> : <svg
+              xmlns='http://www.w3.org/2000/svg'
+              viewBox='0 0 20 20'
+              fill='currentColor'
+              className='flex-shrink-0 w-5 h-5'
+            >
+              <path
+                fillRule='evenodd'
+                d='M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z'
+                clipRule='evenodd'
+              />
+            </svg>}
               <p>{note.note}</p>
             </div>
             {url.includes('edit') && (
