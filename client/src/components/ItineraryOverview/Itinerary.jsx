@@ -4,7 +4,6 @@ import { SET_BOOKMARKS } from '../../reducers/application';
 
 import ItineraryDays from './ItineraryDays';
 import AddNoteForm from './AddNoteForm';
-import Note from './Note';
 import PinnedNote from './PinnedNote';
 
 export default function Itinerary(props) {
