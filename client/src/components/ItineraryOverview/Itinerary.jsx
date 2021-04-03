@@ -5,7 +5,6 @@ import { SET_BOOKMARKS } from '../../reducers/application';
 import ItineraryDays from './ItineraryDays';
 import AddNoteForm from './AddNoteForm';
 import Note from './Note';
-import PinnedNote from './PinnedNote';
 
 export default function Itinerary(props) {
   const {
@@ -301,7 +300,7 @@ export default function Itinerary(props) {
           {pinnedNotes.length > 0 &&
             pinnedNotes.map((note, index) => {
               return (
-                <PinnedNote
+                <Note
                   key={note.id}
                   note={note}
                   deleteTripNote={deleteTripNote}
@@ -311,6 +310,7 @@ export default function Itinerary(props) {
                   isRegularNotes={regularNotes.length !== 0}
                   isFirstNote={index === 0}
                   isLastNote={index === pinnedNotes.length - 1}
+                  isPinned='true'
                 />
               );
             })}
@@ -363,15 +363,16 @@ export default function Itinerary(props) {
             regularNotes.map((note, index) => {
               return (
                 <Note
-                  key={note.id}
-                  note={note}
-                  deleteTripNote={deleteTripNote}
-                  itinerary={itinerary}
-                  dispatch={dispatch}
-                  isRegularNotes={regularNotes.length !== 0}
-                  isMiddleNote={index !== regularNotes.length - 1}
-                  editTripNote={editTripNote}
-                />
+                key={note.id}
+                note={note}
+                deleteTripNote={deleteTripNote}
+                itinerary={itinerary}
+                dispatch={dispatch}
+                editTripNote={editTripNote}
+                isRegularNotes={regularNotes.length !== 0}
+                isFirstNote={index === 0}
+                isLastNote={index === pinnedNotes.length - 1}
+              />
               );
             })}
           {regularNotes.length === 0 && pinnedNotes.length === 0 && (
