@@ -1,4 +1,4 @@
-const itineraryObj = resultArr => {
+const itineraryObj = (resultArr) => {
   const {
     id,
     name,
@@ -25,8 +25,8 @@ const itineraryObj = resultArr => {
   };
   if (resultArr[0].location_id) {
     const dayObjs = [];
-    resultArr.forEach(item => {
-      if (!dayObjs.some(day => day.id === item.day_id)) {
+    resultArr.forEach((item) => {
+      if (!dayObjs.some((day) => day.id === item.day_id)) {
         dayObjs.push({
           id: item.day_id,
           location_id: item.location_id,
@@ -36,7 +36,7 @@ const itineraryObj = resultArr => {
         });
       }
 
-      let activityDay = dayObjs.find(day => day.id === item.day_id);
+      let activityDay = dayObjs.find((day) => day.id === item.day_id);
       if (item.activity_id) {
         activityDay.activities.push({
           id: item.activity_id,
@@ -53,7 +53,7 @@ const itineraryObj = resultArr => {
       }
     });
     const locationArr = [];
-    dayObjs.forEach(day => {
+    dayObjs.forEach((day) => {
       if (
         !locationArr.slice(-1)[0] ||
         !(locationArr.slice(-1)[0].id === day.location_id)
@@ -76,8 +76,8 @@ const itineraryObj = resultArr => {
 
   return itinerary;
 };
-const parseTravelParty = party => {
-  return party.map(user => ({
+const parseTravelParty = (party) => {
+  return party.map((user) => ({
     id: user.user_id,
     email: user.email,
     first_name: user.first_name,
@@ -85,7 +85,7 @@ const parseTravelParty = party => {
   }));
 };
 
-const parseAttractionObj = attractionObj => {
+const parseAttractionObj = (attractionObj) => {
   const tag_labels = attractionObj.tag_labels;
   let category = 'landmark';
   if (tag_labels.includes('sightseeing') || tag_labels.includes('architecture'))
@@ -105,7 +105,7 @@ const parseAttractionObj = attractionObj => {
   )
     category = 'nature';
 
-  let address = attractionObj.properties.find(el => el.key === 'address');
+  let address = attractionObj.properties.find((el) => el.key === 'address');
   address = (address && address.value) || 'not in database';
   const image =
     (attractionObj.images[0] && attractionObj.images[0].source_url) || null;
@@ -121,7 +121,7 @@ const parseAttractionObj = attractionObj => {
   return attraction;
 };
 
-const parseLocationName = locationName => {
+const parseLocationName = (locationName) => {
   let name = locationName;
   if (name === 'Queenstown') name = 'Queenstown,New Zealand';
   if (name === 'Cinque Terre') name = 'Cinque Terre National Park';
@@ -169,6 +169,7 @@ const parseLocationName = locationName => {
   if (name === 'Malacca') name = 'Malacca City';
   if (name === 'Ho Chi Minh') name = 'Ho Chi Minh City';
   if (name === 'Amalfi Coast') name = 'Amalfi';
+  if (name === 'Bellevue') name = 'Bellevue,Washington';
 
   name = name.replace(/\s/g, '_');
   name = name.replace(/,/g, '2C_');

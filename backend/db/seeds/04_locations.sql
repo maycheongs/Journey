@@ -522,5 +522,6 @@ VALUES ('Dublin'),
 ('Babylon'),
 ('Baghdad'),
 ('Lebanon'),
-('Beirut')
+('Beirut'),
+('Bellevue')
 ;
