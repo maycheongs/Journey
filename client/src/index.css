@@ -3,19 +3,18 @@
 @tailwind utilities;
 
 @layer utilities {
-  @variants responsive {
-    /* Chrome, Safari and Opera */
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 
-    .no-scrollbar {
-      -ms-overflow-style: none; /* IE and Edge */
-      scrollbar-width: none; /* Firefox */
-    }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 
+
+/* Print styles remain outside layers */
 @media print {
   html,
   body {
@@ -25,35 +24,25 @@
   }
 }
 
-/* @page {
-  size: auto;
-  margin: 20mm;
-} */
+/* Styles for range inputs go inside @layer components */
+@layer components {
+  input[type='range'] {
+    @apply appearance-none w-full;
+  }
 
-input[type='range'] {
-  @apply appearance-none;
-  @apply w-full;
-}
+  input[type='range']::-webkit-slider-runnable-track {
+    @apply h-1.5 bg-gray-300 rounded-xl;
+  }
 
-input[type='range']::-webkit-slider-runnable-track {
-  @apply h-1.5;
-  @apply bg-gray-300;
-  @apply rounded-xl;
-}
+  input[type='range']::-webkit-slider-thumb {
+    @apply appearance-none h-4 w-4 rounded-full bg-teal-600 -mt-1.5;
+  }
 
-input[type='range']::-webkit-slider-thumb {
-  @apply appearance-none;
-  @apply h-4;
-  @apply w-4;
-  @apply rounded-full;
-  @apply bg-teal-600;
-  @apply -mt-1.5;
-}
+  input[type='range']:focus {
+    @apply outline-none;
+  }
 
-input[type='range']:focus {
-  @apply outline-none;
-}
-
-input[type='range']:focus::-webkit-slider-runnable-track {
-  /* background: #ccc; */
+  input[type='range']:focus::-webkit-slider-runnable-track {
+    /* Optional: Add focus style */
+  }
 }

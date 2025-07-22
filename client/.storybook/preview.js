@@ -1,11 +1,26 @@
-import '../src/index.css'; // or wherever your global CSS is
+/** @type { import('@storybook/react-webpack5').Preview } */
+import '../src/index.css';
 
-export const parameters = {
-  actions: { argTypesRegex: '^on[A-Z].*' },
-  controls: {
-    matchers: {
-      color: /(background|color)$/i,
-      date: /Date$/,
+// .storybook/preview.js or preview.ts
+import { MemoryRouter } from 'react-router-dom';
+
+export const decorators = [
+  (Story) => (
+    <MemoryRouter>
+      <Story />
+    </MemoryRouter>
+  ),
+];
+
+const preview = {
+  parameters: {
+    controls: {
+      matchers: {
+       color: /(background|color)$/i,
+       date: /Date$/i,
+      },
     },
   },
 };
+
+export default preview;
