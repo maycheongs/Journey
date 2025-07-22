@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import useApplicationData from './hooks/useApplicationData';
 
@@ -58,7 +58,7 @@ function App() {
   return (
     <Router>
       <Nav user={user} logout={logout} dispatch={dispatch} />
-      <Switch>
+      <Routes>
         <Route path='/' exact>
           <Home />
         </Route>
@@ -257,7 +257,7 @@ function App() {
             </main>
           )}
         </Route>
-      </Switch>
+      </Routes>
     </Router>
   );
 }
