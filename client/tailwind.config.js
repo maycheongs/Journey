@@ -2,23 +2,21 @@ const colors = require('tailwindcss/colors');
 const { colors: defaultColors } = require('tailwindcss/defaultTheme');
 
 module.exports = {
-  purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+  content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'], // renamed from purge to content in v3
   darkMode: false, // or 'media' or 'class'
   theme: {
     colors: {
       ...defaultColors,
-      ...{
-        teal: colors.teal,
-      },
+      teal: colors.teal,
     },
     fontFamily: {
       body: ['Open Sans', 'sans-serif'],
       test: ['Inter', 'sans-serif'],
     },
     extend: {
-      backgroundImage: theme => ({
+      backgroundImage: {
         homepage: "url('./images/fuji-5.png')",
-      }),
+      },
     },
   },
   variants: {
