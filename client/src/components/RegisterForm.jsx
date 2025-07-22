@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import FormButton from './FormButton';
 import AlertMessage from './AlertMessage';
 import { SET_USER } from '../reducers/application';
@@ -20,7 +20,7 @@ export default function RegisterForm(props) {
     hide: 'hidden',
   });
 
-  const history = useHistory();
+  const history = useNavigate();
 
   const save = function (event) {
     event.preventDefault();
