@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { SET_USER } from '../reducers/application';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import FormButton from './FormButton';
 import AlertMessage from './AlertMessage';
@@ -18,7 +18,7 @@ export default function LoginForm(props) {
     hide: 'hidden',
   });
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleChange = event => {
     const { value, name } = event.target;
@@ -61,7 +61,7 @@ export default function LoginForm(props) {
             user: res.data,
           });
 
-          history.push(`/dashboard/${res.data.id}`);
+          navigate(`/dashboard/${res.data.id}`);
         } else if (res.data.error) {
           setError({
             ...error,
