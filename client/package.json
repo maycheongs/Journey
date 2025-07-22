@@ -8,8 +8,8 @@
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public"
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@craco/craco": "^7.1.0",
@@ -24,22 +24,17 @@
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
-  "@storybook/addon-actions": "^6.5.16",
-  "@storybook/addon-essentials": "^6.5.16",
-  "@storybook/addon-links": "^6.5.16",
-  "@storybook/node-logger": "^6.5.16",
-  "@storybook/preset-create-react-app": "^3.1.7",
-  "@storybook/react": "^6.5.16",
-  "@tailwindcss/aspect-ratio": "^0.4.2",
-  "@tailwindcss/forms": "^0.5.7",
-  "@tailwindcss/line-clamp": "^0.4.2",
-  "autoprefixer": "^10.4.14",
-  "postcss": "^8.4.21",
-  "tailwindcss": "^3.3.2"
-}
-
-
-,
+    "@storybook/addon-docs": "9.0.17",
+    "@storybook/react-webpack5": "^9.0.17",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/line-clamp": "^0.4.2",
+    "autoprefixer": "^10.4.14",
+    "html-webpack-plugin": "^4.5.2",
+    "postcss": "^8.4.21",
+    "storybook": "^9.0.17",
+    "tailwindcss": "^3.3.2"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
