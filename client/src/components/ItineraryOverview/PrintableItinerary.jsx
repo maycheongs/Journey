@@ -1,12 +1,12 @@
 import React, { useRef } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import ReactToPrint from 'react-to-print';
 
 export default function PrintableItinerary({ children }) {
   const { pathname } = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const removeEdit = () => {
-    history.push(pathname.replace('/edit', ''));
+    navigate(pathname.replace('/edit', ''));
   };
   const linkToPrint = () => {
     return (

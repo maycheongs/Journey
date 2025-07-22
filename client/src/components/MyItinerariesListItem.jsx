@@ -1,4 +1,4 @@
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { SET_MY_ITINERARIES } from '../reducers/application';
 import AlertMessage from './AlertMessage';
@@ -21,7 +21,7 @@ export default function MyItinerariesListItem(props) {
     hide: 'hidden flex p-3 mx-8 mt-8 bg-red-700 bg-opacity-50 rounded-xl',
   });
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const DEFAULT = 'DEFAULT';
   const DELETE = 'DELETE';
@@ -42,7 +42,7 @@ export default function MyItinerariesListItem(props) {
           myItineraries: res.data,
         });
 
-        history.push(`/dashboard/${props.user.id}`);
+        navigate(`/dashboard/${props.user.id}`);
       }
     });
   };

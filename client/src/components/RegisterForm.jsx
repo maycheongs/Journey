@@ -20,7 +20,7 @@ export default function RegisterForm(props) {
     hide: 'hidden',
   });
 
-  const history = useNavigate();
+  const navigate = useNavigate();
 
   const save = function (event) {
     event.preventDefault();
@@ -87,7 +87,7 @@ export default function RegisterForm(props) {
               status: false,
               message: '',
             });
-            history.push(`/dashboard/${res.data.id}`);
+            navigate(`/dashboard/${res.data.id}`);
           }
         });
       return;

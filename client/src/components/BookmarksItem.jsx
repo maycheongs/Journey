@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { SET_BOOKMARKS } from '../reducers/application';
 
 import AlertMessage from './AlertMessage';
@@ -22,7 +22,7 @@ export default function BookmarksItem(props) {
     hide: 'hidden flex p-3 mx-8 mt-8 bg-red-700 bg-opacity-50 rounded-xl',
   });
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const DEFAULT = 'DEFAULT';
   const DELETE = 'DELETE';
@@ -42,7 +42,7 @@ export default function BookmarksItem(props) {
           type: SET_BOOKMARKS,
           bookmarks: res.data,
         });
-        history.push(`/dashboard/${props.user.id}/bookmarks`);
+        navigate(`/dashboard/${props.user.id}/bookmarks`);
       }
     });
   };

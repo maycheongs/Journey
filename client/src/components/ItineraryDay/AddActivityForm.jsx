@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { SET_ITINERARY } from '../../reducers/application';
 
 import AlertMessage from '../AlertMessage';
@@ -27,7 +27,7 @@ export default function AddActivityForm(props) {
     hide: 'hidden',
   });
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleChange = event => {
     let { value, name } = event.target;
@@ -94,7 +94,7 @@ export default function AddActivityForm(props) {
           itinerary: itinerary,
         });
 
-        history.push(`/itineraries/${itinerary_id}/days/${day_id}/edit`);
+        navigate(`/itineraries/${itinerary_id}/days/${day_id}/edit`);
       } else if (res.data.error) {
         setError({
           ...error,
@@ -113,7 +113,7 @@ export default function AddActivityForm(props) {
   };
 
   const cancel = () => {
-    history.push(`/itineraries/${itinerary_id}/days/${day_id}/edit`);
+    navigate(`/itineraries/${itinerary_id}/days/${day_id}/edit`);
   };
 
   return (

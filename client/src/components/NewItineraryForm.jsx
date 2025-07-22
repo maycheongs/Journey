@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { SET_ITINERARY } from '../reducers/application';
 
@@ -34,7 +34,7 @@ export default function NewItineraryForm(props) {
     }
   };
 
-  let history = useHistory();
+  let navigate = useNavigate();
 
   const handleChange = event => {
     const { value, name } = event.target;
@@ -83,7 +83,7 @@ export default function NewItineraryForm(props) {
           itinerary: res.data,
         });
 
-        history.push(`/itineraries/${res.data.id}/edit`);
+        navigate(`/itineraries/${res.data.id}/edit`);
       } else if (res.data.error) {
         setError({
           ...error,
@@ -95,7 +95,7 @@ export default function NewItineraryForm(props) {
   };
 
   const cancel = () => {
-    history.push(`/dashboard/${props.user.id}`);
+    navigate(`/dashboard/${props.user.id}`);
   };
 
   return (

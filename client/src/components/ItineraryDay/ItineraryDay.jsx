@@ -1,4 +1,4 @@
-import { useParams, Link, useLocation, useHistory } from 'react-router-dom';
+import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
 import ItineraryDayActivities from './ItineraryDayActivities';
@@ -60,7 +60,7 @@ export default function ItineraryDay(props) {
 
   const DEFAULT = 'DEFAULT';
   const DELETE = 'DELETE';
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [view, setView] = useState(DEFAULT);
 
@@ -69,7 +69,7 @@ export default function ItineraryDay(props) {
       if (res.error) {
         console.log(res.error);
       } else {
-        history.push(`/itineraries/${itinerary_id}/edit`);
+        navigate(`/itineraries/${itinerary_id}/edit`);
       }
     });
   };

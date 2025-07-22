@@ -1,4 +1,4 @@
-import { useLocation, useParams, useHistory } from 'react-router-dom';
+import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import DeleteConfirmation from '../DeleteConfirmation';
 import EditActivityForm from './EditActivityForm';
@@ -6,7 +6,7 @@ import AlertMessage from '../AlertMessage';
 
 export default function ItineraryDayActivities(props) {
   const { activity, editActivity, timeSlots, currentDay, itinerary } = props;
-  const history = useHistory();
+  const navigate = useNavigate();
   const url = useLocation().pathname;
   const { itinerary_id, day_id } = useParams();
 
@@ -167,7 +167,7 @@ export default function ItineraryDayActivities(props) {
   const cancel = () => {
     setView(DEFAULT);
     setEditMode(BASE);
-    history.push(url);
+    navigate(url);
     setError({
       ...error,
       status: false,
