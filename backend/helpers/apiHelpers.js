@@ -1,4 +1,4 @@
-module.exports = db => {
+export default db => {
   const getAllItineraries = () => {
     const query = {
       text: `SELECT itineraries.*, COUNT(DISTINCT days.id) AS days FROM itineraries

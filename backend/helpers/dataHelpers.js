@@ -182,7 +182,7 @@ const parseLocationName = (locationName) => {
   return name;
 };
 
-module.exports = {
+export {
   itineraryObj,
   parseTravelParty,
   parseAttractionObj,

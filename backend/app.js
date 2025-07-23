@@ -1,22 +1,31 @@
-const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
-const path = require('path');
-const cookieSession = require('cookie-session');
-const logger = require('morgan');
-const helmet = require('helmet');
-const cors = require('cors');
+import express from 'express';
+import http from 'http';
+import { Server as SocketIO } from 'socket.io'; 
+import path from 'path';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+import cookieSession from 'cookie-session';
+import logger from 'morgan';
+import helmet from 'helmet';
+import cors from 'cors';
 
 const port = process.env.PORT || 8002;
 
-const usersRouter = require('./routes/users');
-const apiRouter = require('./routes/itineraries');
-const searchRouter = require('./routes/attractions');
+import usersRouter from './routes/users.js';
+import apiRouter from './routes/itineraries.js';
+import searchRouter from './routes/attractions.js';
 
-const db = require('./db');
-const userHelpers = require('./helpers/userHelpers')(db);
-const apiHelpers = require('./helpers/apiHelpers')(db);
-const searchHelpers = require('./helpers/searchHelpers')(db);
+import db from './db/index.js';
+import userHelpersFactory from './helpers/userHelpers.js';
+import apiHelpersFactory from './helpers/apiHelpers.js';
+import searchHelpersFactory from './helpers/searchHelpers.js';
+
+const userHelpers = userHelpersFactory(db);
+const apiHelpers = apiHelpersFactory(db);
+const searchHelpers = searchHelpersFactory(db);
 
 const app = express();
 
@@ -39,7 +48,7 @@ app.use('/api/attractions', searchRouter(searchHelpers));
 
 const server = http.createServer(app);
 
-const io = socketIo(server, {
+const io = new SocketIO(server, {
   cors: {
     origin: 'http://localhost:8000',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -62,4 +71,4 @@ io.on('connection', (socket) => {
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
 
-module.exports = app;
+export default app;

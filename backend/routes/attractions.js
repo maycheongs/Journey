@@ -1,16 +1,18 @@
-const axios = require('axios');
-const express = require('express');
+
+import axios from 'axios';
+import express from 'express';
 const router = express.Router();
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
 dotenv.config();
 const account = process.env.ACCOUNT_ID;
 const token = process.env.TOKEN;
-const {
+
+import {
   parseAttractionObj,
   parseLocationName,
-} = require('../helpers/dataHelpers');
+}  from '../helpers/dataHelpers.js';
 
-module.exports = ({
+export default ({
   getCoordinatesByLocationName,
   addThenGetAttraction,
   addAddress,

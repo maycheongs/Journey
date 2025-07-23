@@ -1,9 +1,11 @@
-const express = require('express');
+import express from 'express';
+import bcrypt from 'bcrypt';
+
 const router = express.Router();
-const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
-module.exports = ({
+
+export default ({
   getUser,
   getUserByEmail,
   addUser,

@@ -1,5 +1,8 @@
-const pg = require('pg');
-require('dotenv').config();
+import pg from 'pg';
+import dotenv from 'dotenv';
+import path from 'path';
+// Calculate the absolute path to the root .env file
+dotenv.config({ path: path.resolve(process.cwd(), '../.env') });
 
 const connectionString = `postgres://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?sslmode=disable`;
 
@@ -8,6 +11,9 @@ const client = new pg.Client({
 });
 
 console.log(`Connected to ${process.env.DB_NAME} on ${process.env.DB_HOST}`);
-client.connect();
+client.connect()
+.then(() => console.log('Database connected successfully'))
+.catch(err => console.error('Database connection error:', err));
 
-module.exports = client;
+export default client;
+

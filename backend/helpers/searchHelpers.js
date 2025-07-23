@@ -1,4 +1,4 @@
-module.exports = (db) => {
+export default (db) => {
   const getCoordinatesByLocationName = (locationName) => {
     const query = {
       text: `SELECT latitude as lat, longitude as lon

@@ -1,4 +1,4 @@
-module.exports = db => {
+export default db => {
   const getUser = id => {
     const query = {
       text: 'SELECT * FROM users WHERE id = $1;',

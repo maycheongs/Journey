@@ -1,10 +1,10 @@
-const axios = require('axios');
-const { query } = require('express');
-const express = require('express');
-const router = express.Router();
-const { itineraryObj, parseTravelParty } = require('../helpers/dataHelpers');
+import axios from 'axios';
+import express from 'express';
 
-module.exports = ({
+const router = express.Router();
+import { itineraryObj, parseTravelParty } from '../helpers/dataHelpers.js';
+
+export default ({
   getAllItineraries,
   createNewItinerary,
   createTravelParty,
