@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import useApplicationData from './hooks/useApplicationData';
 
@@ -59,16 +59,10 @@ function App() {
     <Router>
       <Nav user={user} logout={logout} dispatch={dispatch} />
       <Routes>
-        <Route path='/' exact>
-          <Home />
-        </Route>
-        <Route path='/login'>
-          <Login onSave={login} dispatch={dispatch} />
-        </Route>
-        <Route path='/signup'>
-          <Register register={register} dispatch={dispatch} />
-        </Route>
-        <Route path={`/itineraries/new`}>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login onSave={login} dispatch={dispatch} />} />
+        <Route path="/signup" element={<Register register={register} dispatch={dispatch} />} />
+        {/* <Route path={`/itineraries/new`}>
           {user.id && (
             <main className='flex w-full h-full min-h-screen'>
               <LeftNav user={user} setItinerary={setItinerary} />
@@ -79,8 +73,25 @@ function App() {
               />
             </main>
           )}
-        </Route>
-        <Route path='/itineraries' exact>
+        </Route> */}
+        <Route
+          path="/itineraries/new"
+          element={
+            user.id ? (
+              <main className="flex w-full h-full min-h-screen">
+                <LeftNav user={user} setItinerary={setItinerary} />
+                <NewItineraryForm
+                  dispatch={dispatch}
+                  onSave={createItinerary}
+                  user={user}
+                />
+              </main>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        {/* <Route path='/itineraries' exact>
           <main className='flex w-full min-h-full'>
             <ItineraryList
               user={user}
@@ -92,8 +103,24 @@ function App() {
               deleteBookmark={deleteBookmark}
             />
           </main>
-        </Route>
-        <Route path='/itineraries/:itinerary_id/collaborators'>
+        </Route> */}
+        <Route
+          path="/itineraries"
+          element={
+            <main className="flex w-full min-h-full">
+              <ItineraryList
+                user={user}
+                addBookmark={addBookmark}
+                dispatch={dispatch}
+                bookmarks={bookmarks}
+                searchItineraries={searchItineraries}
+                reload={key}
+                deleteBookmark={deleteBookmark}
+              />
+            </main>
+          }
+        />
+        {/* <Route path='/itineraries/:itinerary_id/collaborators'>
           <main className='flex w-full min-h-screen'>
             <LeftNav
               user={user}
@@ -116,8 +143,34 @@ function App() {
                 />
               )}
           </main>
-        </Route>
-        <Route path='/itineraries/:itinerary_id/days/:day_id/activities/new'>
+        </Route> */}
+        <Route
+          path="/itineraries/:itinerary_id/collaborators"
+          element={
+            <main className="flex w-full min-h-screen">
+              <LeftNav
+                user={user}
+                itinerary={itinerary}
+                setItinerary={setItinerary}
+                addDayWithLocation={addDayWithLocation}
+                sideBarState={state.sideNav}
+                updateSidebar={updateSidebar}
+              />
+              {itinerary?.users?.some(member => member.id === user.id) && (
+                <MyGroup
+                  user={user}
+                  itinerary={itinerary}
+                  removeCollaborator={removeCollaborator}
+                  addCollaborator={addCollaborator}
+                  sideBarState={state.sideNav}
+                  updateSidebar={updateSidebar}
+                />
+              )}
+            </main>
+          }
+        />
+
+        {/* <Route path='/itineraries/:itinerary_id/days/:day_id/activities/new'>
           <main className='flex w-full min-h-screen'>
             <LeftNav
               user={user}
@@ -135,8 +188,30 @@ function App() {
               updateSidebar={updateSidebar}
             />
           </main>
-        </Route>
-        <Route path='/itineraries/:itinerary_id/days/:day_id'>
+        </Route> */}
+        <Route
+          path="/itineraries/:itinerary_id/days/:day_id/activities/new"
+          element={
+            <main className="flex w-full min-h-screen">
+              <LeftNav
+                user={user}
+                itinerary={itinerary}
+                setItinerary={setItinerary}
+                addDayWithLocation={addDayWithLocation}
+                sideBarState={state.sideNav}
+                updateSidebar={updateSidebar}
+              />
+              <AddActivityForm
+                dispatch={dispatch}
+                onSave={createActivity}
+                itinerary={itinerary}
+                sideBarState={state.sideNav}
+                updateSidebar={updateSidebar}
+              />
+            </main>
+          }
+        />
+        {/* <Route path='/itineraries/:itinerary_id/days/:day_id'>
           <main className='flex w-full min-h-screen'>
             <LeftNav
               user={user}
@@ -171,8 +246,45 @@ function App() {
                 />
               )}
           </main>
-        </Route>
-        <Route path='/itineraries/:itinerary_id/overview/edit'>
+        </Route> */}
+        <Route
+          path="/itineraries/:itinerary_id/days/:day_id"
+          element={
+            <main className="flex w-full min-h-screen">
+              <LeftNav
+                user={user}
+                itinerary={itinerary}
+                setItinerary={setItinerary}
+                addDayWithLocation={addDayWithLocation}
+                sideBarState={state.sideNav}
+                updateSidebar={updateSidebar}
+              />
+              <ItineraryDay
+                itinerary={itinerary}
+                dispatch={dispatch}
+                user={user}
+                deleteDayFromItinerary={deleteDayFromItinerary}
+                deleteActivity={deleteActivity}
+                editActivity={editActivity}
+                sideBarState={state.sideNav}
+              />
+              {itinerary?.users?.some(member => member.id === user.id) && (
+                <RightNav
+                  itinerary={itinerary}
+                  sideBarState={state.sideNav}
+                  updateSidebar={updateSidebar}
+                  dispatch={dispatch}
+                  searchAttractions={searchAttractions}
+                  addMyLocation={addMyLocation}
+                  createActivity={createActivity}
+                  updateActivityDay={updateActivityDay}
+                  deleteActivity={deleteActivityWithoutDay}
+                />
+              )}
+            </main>
+          }
+        />
+        {/* <Route path='/itineraries/:itinerary_id/overview/edit'>
           <main className='relative flex w-full min-h-screen'>
             <LeftNav
               user={user}
@@ -190,8 +302,30 @@ function App() {
               />
             )}
           </main>
-        </Route>
-        <Route path='/itineraries/:itinerary_id'>
+        </Route> */}
+        <Route
+          path="/itineraries/:itinerary_id/overview/edit"
+          element={
+            <main className="relative flex w-full min-h-screen">
+              <LeftNav
+                user={user}
+                itinerary={itinerary}
+                setItinerary={setItinerary}
+                addDayWithLocation={addDayWithLocation}
+                sideBarState={state.sideNav}
+                updateSidebar={updateSidebar}
+              />
+              {itinerary && (
+                <EditItineraryForm
+                  dispatch={dispatch}
+                  itinerary={itinerary}
+                  onSave={editItinerary}
+                />
+              )}
+            </main>
+          }
+        />
+        {/* <Route path='/itineraries/:itinerary_id'>
           <main className='relative flex w-full min-h-screen'>
             <LeftNav
               user={user}
@@ -219,8 +353,40 @@ function App() {
               </PrintableItinerary>
             )}
           </main>
-        </Route>
-        <Route path='/dashboard/:user_id/bookmarks'>
+        </Route> */}
+        <Route
+          path="/itineraries/:itinerary_id"
+          element={
+            <main className="relative flex w-full min-h-screen">
+              <LeftNav
+                user={user}
+                itinerary={itinerary}
+                setItinerary={setItinerary}
+                addDayWithLocation={addDayWithLocation}
+                sideBarState={state.sideNav}
+                updateSidebar={updateSidebar}
+              />
+              {itinerary && (
+                <PrintableItinerary>
+                  <Itinerary
+                    dispatch={dispatch}
+                    itinerary={itinerary}
+                    user={user}
+                    deleteDayFromItinerary={deleteDayFromItinerary}
+                    sideBarState={state.sideNav}
+                    addBookmark={addBookmark}
+                    deleteBookmark={deleteBookmark}
+                    bookmarks={bookmarks}
+                    addTripNote={addTripNote}
+                    deleteTripNote={deleteTripNote}
+                    editTripNote={editTripNote}
+                  />
+                </PrintableItinerary>
+              )}
+            </main>
+          }
+        />
+        {/* <Route path='/dashboard/:user_id/bookmarks'>
           {user.id && (
             <main className='flex w-full min-h-screen'>
               <LeftNav user={user} dispatch={dispatch} />
@@ -232,8 +398,26 @@ function App() {
               />
             </main>
           )}
-        </Route>
-        <Route path='/dashboard/:user_id/edit'>
+        </Route> */}
+        <Route
+          path="/dashboard/:user_id/bookmarks"
+          element={
+            user.id ? (
+              <main className="flex w-full min-h-screen">
+                <LeftNav user={user} dispatch={dispatch} />
+                <Bookmarks
+                  bookmarks={bookmarks}
+                  user={user}
+                  deleteBookmark={deleteBookmark}
+                  dispatch={dispatch}
+                />
+              </main>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        {/* <Route path='/dashboard/:user_id/edit'>
           {user.id && (
             <main className='flex w-full min-h-screen'>
               <LeftNav user={user} dispatch={dispatch} />
@@ -243,8 +427,25 @@ function App() {
               ></ManageAccount>
             </main>
           )}
-        </Route>
-        <Route path='/dashboard/:user_id'>
+            
+        </Route> */}
+        <Route
+          path="/dashboard/:user_id/edit"
+          element={
+            user.id ? (
+              <main className="flex w-full min-h-screen">
+                <LeftNav user={user} dispatch={dispatch} />
+                <ManageAccount
+                  user={user}
+                  changePassword={changePassword}
+                />
+              </main>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        {/* <Route path='/dashboard/:user_id'>
           {user.id && (
             <main className='flex w-full min-h-screen'>
               <LeftNav user={user} dispatch={dispatch} />
@@ -256,7 +457,25 @@ function App() {
               />
             </main>
           )}
-        </Route>
+        </Route> */}
+        <Route
+          path="/dashboard/:user_id"
+          element={
+            user.id ? (
+              <main className="flex w-full min-h-screen">
+                <LeftNav user={user} dispatch={dispatch} />
+                <MyItinerariesList
+                  myItineraries={myItineraries}
+                  user={user}
+                  dispatch={dispatch}
+                  deleteItinerary={deleteItinerary}
+                />
+              </main>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
       </Routes>
     </Router>
   );
