@@ -28,7 +28,7 @@ export default function DashboardLeftNav(props) {
         </div>
         <div className='mb-4'>
           <NavLink
-            exact
+            // exact
             to={`/dashboard/${user.id}`}
             activeClassName='selected bg-gray-200 bg-opacity-25'
             className='flex items-center justify-between p-4 sm:px-4 sm:py-2 hover:bg-gray-200 hover:bg-opacity-25 rounded-xl'
