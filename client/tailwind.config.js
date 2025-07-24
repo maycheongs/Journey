@@ -2,7 +2,7 @@ const colors = require('tailwindcss/colors');
 const { colors: defaultColors } = require('tailwindcss/defaultTheme');
 
 module.exports = {
-  content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'], // renamed from purge to content in v3
+  content: ['./index.html','./src/**/*.{js,jsx,ts,tsx}', './public/index.html'], // renamed from purge to content in v3
   darkMode: false, // or 'media' or 'class'
   theme: {
   extend: {
@@ -17,8 +17,7 @@ module.exports = {
     body: ['Open Sans', 'sans-serif'],
     test: ['Inter', 'sans-serif'],
   },
-}
-,
+},
   variants: {
     extend: {
       borderWidth: ['hover', 'focus', 'group-hover'],
@@ -33,5 +32,13 @@ module.exports = {
     require('@tailwindcss/forms'),
     require('@tailwindcss/line-clamp'),
     require('@tailwindcss/aspect-ratio'),
+    function ({ addUtilities }) {
+      console.log('Tailwind plugin loaded');
+      addUtilities({
+        '.test-util': {
+          color: 'red',
+        },
+      });
+    },
   ],
 };
