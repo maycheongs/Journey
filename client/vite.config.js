@@ -14,6 +14,12 @@ export default defineConfig({
     fs: {
       strict: false,
     },
+     proxy: {
+      '/api': {
+        target: 'http://localhost:8001', // your backend
+        changeOrigin: true,
+      },
+    },
     middlewareMode: false,
     configureServer(server) {
       // Add this *before* Vite's internal middlewares

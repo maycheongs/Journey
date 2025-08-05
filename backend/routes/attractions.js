@@ -10,7 +10,7 @@ const token = process.env.TOKEN;
 import {
   parseAttractionObj,
   parseLocationName,
-}  from '../db_queries/dataHelpers.js';
+}  from '../utils/apiParsers.js';
 
 export default ({
   getCoordinatesByLocationName,

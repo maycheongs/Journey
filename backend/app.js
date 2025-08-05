@@ -20,7 +20,7 @@ import searchRouter from './routes/attractions.js';
 
 import db from './db/index.js';
 import userHelpersFactory from './db_queries/userHelpers.js';
-import apiHelpersFactory from './db_queries/apiHelpers.js';
+import apiHelpersFactory from './db_queries/itineraryHelpers.js';
 import searchHelpersFactory from './db_queries/searchHelpers.js';
 
 const userHelpers = userHelpersFactory(db);
@@ -50,7 +50,7 @@ const server = http.createServer(app);
 
 const io = new SocketIO(server, {
   cors: {
-    origin: 'http://localhost:8000',
+    origin: ['http://localhost:8000', 'http://127.0.0.1:8000'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
   },
 });
