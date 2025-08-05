@@ -149,7 +149,7 @@ function App() {
         />
 
         <Route
-          path="/itineraries/:itinerary_id/days/:day_id"
+          path="/itineraries/:itinerary_id/days/:day_id/*"
           element={
             <main className="flex w-full min-h-screen">
               <LeftNav
@@ -210,7 +210,7 @@ function App() {
         />
 
         <Route
-          path="/itineraries/:itinerary_id"
+          path="/itineraries/:itinerary_id/*"
           element={
             <main className="relative flex w-full min-h-screen">
               <LeftNav
