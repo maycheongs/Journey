@@ -2,7 +2,7 @@ import axios from 'axios';
 import express from 'express';
 
 const router = express.Router();
-import { itineraryObj, parseTravelParty } from '../helpers/dataHelpers.js';
+import { itineraryObj, parseTravelParty } from '../db_queries/dataHelpers.js';
 
 export default ({
   getAllItineraries,

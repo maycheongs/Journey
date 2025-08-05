@@ -19,9 +19,9 @@ import apiRouter from './routes/itineraries.js';
 import searchRouter from './routes/attractions.js';
 
 import db from './db/index.js';
-import userHelpersFactory from './helpers/userHelpers.js';
-import apiHelpersFactory from './helpers/apiHelpers.js';
-import searchHelpersFactory from './helpers/searchHelpers.js';
+import userHelpersFactory from './db_queries/userHelpers.js';
+import apiHelpersFactory from './db_queries/apiHelpers.js';
+import searchHelpersFactory from './db_queries/searchHelpers.js';
 
 const userHelpers = userHelpersFactory(db);
 const apiHelpers = apiHelpersFactory(db);
