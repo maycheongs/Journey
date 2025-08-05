@@ -28,10 +28,11 @@ export default function DashboardLeftNav(props) {
         </div>
         <div className='mb-4'>
           <NavLink
-            // exact
             to={`/dashboard/${user.id}`}
-            activeClassName='selected bg-gray-200 bg-opacity-25'
-            className='flex items-center justify-between p-4 sm:px-4 sm:py-2 hover:bg-gray-200 hover:bg-opacity-25 rounded-xl'
+            className={({ isActive }) =>
+              `flex items-center justify-between p-4 sm:px-4 sm:py-2 rounded-xl hover:bg-gray-200 hover:bg-opacity-25 ${isActive ? 'selected bg-gray-200 bg-opacity-25' : ''
+              }`
+            }
           >
             <span className='hidden sm:flex'>My Itineraries</span>
             <svg
@@ -47,8 +48,10 @@ export default function DashboardLeftNav(props) {
         <div className='mb-4'>
           <NavLink
             to={`/dashboard/${user.id}/bookmarks`}
-            activeClassName='selected bg-gray-200 bg-opacity-25'
-            className='flex items-center justify-between p-4 sm:px-4 sm:py-2 hover:bg-gray-200 hover:bg-opacity-25 rounded-xl'
+            className={({ isActive }) =>
+              `flex items-center justify-between p-4 sm:px-4 sm:py-2 rounded-xl hover:bg-gray-200 hover:bg-opacity-25 ${isActive ? 'selected bg-gray-200 bg-opacity-25' : ''
+              }`
+            }
           >
             <span className='hidden sm:flex'>Bookmarks</span>
             <svg
@@ -64,8 +67,10 @@ export default function DashboardLeftNav(props) {
         <div className='mb-4'>
           <NavLink
             to={`/dashboard/${user.id}/edit`}
-            activeClassName='selected bg-gray-200 bg-opacity-25'
-            className='flex items-center justify-between p-4 sm:px-4 sm:py-2 hover:bg-gray-200 hover:bg-opacity-25 rounded-xl'
+            className={({ isActive }) =>
+              `flex items-center justify-between p-4 sm:px-4 sm:py-2 rounded-xl hover:bg-gray-200 hover:bg-opacity-25 ${isActive ? 'selected bg-gray-200 bg-opacity-25' : ''
+              }`
+            }
           >
             <span className='hidden sm:flex'>Manage Account</span>
             <svg

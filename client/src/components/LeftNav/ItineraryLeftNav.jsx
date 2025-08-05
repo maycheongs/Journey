@@ -224,13 +224,13 @@ export default function ItineraryLeftNav(props) {
                     {locationObj.days.map(day => {
                       return (
                         <NavLink
-                          to={`/itineraries/${itinerary.id}/days/${day.id}${
-                            editMode ? '/edit' : ''
-                          }`}
+                          to={`/itineraries/${itinerary.id}/days/${day.id}${editMode ? '/edit' : ''}`}
                           key={day.id}
-                          activeClassName='bg-gray-200 bg-opacity-25'
-                          className='flex justify-between px-4 py-2 font-semibold hover:bg-gray-200 hover:bg-opacity-25 rounded-xl hover:text-gray-100'
                           replace
+                          className={({ isActive }) =>
+                            `flex justify-between px-4 py-2 font-semibold rounded-xl hover:bg-gray-200 hover:bg-opacity-25 hover:text-gray-100 ${isActive ? 'bg-gray-200 bg-opacity-25' : ''
+                            }`
+                          }
                         >
                           <span>Day {day.day_order}</span>
                           <span className='font-light'>
@@ -280,8 +280,8 @@ export default function ItineraryLeftNav(props) {
             })}
           </div>
           {editMode &&
-          itinerary.users &&
-          itinerary.users.some(member => member.id === user.id) ? (
+            itinerary.users &&
+            itinerary.users.some(member => member.id === user.id) ? (
             <div>
               <div
                 className='flex items-center justify-between px-3 py-2 my-2 cursor-pointer hover:bg-gray-200 hover:bg-opacity-25 rounded-xl'
