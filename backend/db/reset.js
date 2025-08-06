@@ -1,52 +1,64 @@
-// load .env data into process.env
-import dotenv from 'dotenv';
-
-
-// other dependencies
+// REFACTOR in future to use pg pool for better connection management
 import fs from 'fs';
-import chalk from 'chalk';
-import { Client } from 'pg';
 import path from 'path';
-// Calculate the absolute path to the root .env file
-dotenv.config({ path: path.resolve(process.cwd(), '../.env') });
+import chalk from 'chalk';
+import client from './index.js'; 
 
-// PG connection setup
-const connectionString =
-  process.env.DATABASE_URL ||
-  `postgresql://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?sslmode=disable`;
-const client = new Client({ connectionString });
+// --- Helper to run all SQL files in a folder ---
+const runSqlFilesFromFolder = async (folderName, description) => {
+  console.log(chalk.cyan(`-> Loading ${description}...`));
+  const folderPath = path.resolve(`./db/${folderName}`);
+  const files = fs.readdirSync(folderPath);
 
-// Loads the schema files from db/schema
-const runSchemaFiles = async function () {
-  console.log(chalk.cyan(`-> Loading Schema Files ...`));
-  const schemaFilenames = fs.readdirSync('./db/schema');
-
-  for (const fn of schemaFilenames) {
-    const sql = fs.readFileSync(`./db/schema/${fn}`, 'utf8');
-    console.log(`\t-> Running ${chalk.green(fn)}`);
+  for (const file of files) {
+    const filePath = path.join(folderPath, file);
+    const sql = fs.readFileSync(filePath, 'utf8');
+    console.log(`\t-> Running ${chalk.green(file)}`);
     await client.query(sql);
   }
 };
 
-const runSeedFiles = async function () {
-  console.log(chalk.cyan(`-> Loading Seeds ...`));
-  const schemaFilenames = fs.readdirSync('./db/seeds');
+// --- Drop all tables ---
+const dropAllTables = async () => {
+  console.log(chalk.yellow('\n-> Dropping all tables...'));
+  const { rows } = await client.query(`
+    SELECT tablename 
+    FROM pg_tables 
+    WHERE schemaname = 'public';
+  `);
 
-  for (const fn of schemaFilenames) {
-    const sql = fs.readFileSync(`./db/seeds/${fn}`, 'utf8');
-    console.log(`\t-> Running ${chalk.green(fn)}`);
-    await client.query(sql);
+  if (rows.length === 0) {
+    console.log(chalk.gray('No tables found.'));
+    return;
+  }
+
+  // Disable FK checks, drop tables, re-enable FK checks
+  await client.query('SET session_replication_role = replica;');
+  for (const { tablename } of rows) {
+    console.log(`\t-> Dropping ${chalk.red(tablename)}`);
+    await client.query(`DROP TABLE IF EXISTS "${tablename}" CASCADE;`);
+  }
+  await client.query('SET session_replication_role = DEFAULT;');
+  console.log(chalk.green('All tables dropped.\n'));
+};
+
+// --- Full reset process ---
+const resetDatabase = async () => {
+  try {
+    console.log(chalk.yellow(`\n-> Resetting and seeding the database...\n`));
+
+    await dropAllTables();
+    await runSqlFilesFromFolder('schema', 'Schema Files');
+    await runSqlFilesFromFolder('seeds', 'Seed Files');
+
+    console.log(chalk.green(`\nDatabase reset and seeded successfully!`));
+  } catch (err) {
+    console.error(chalk.red(`Failed due to error:\n`), err);
+  } finally {
+    await client.end(); // ✅ Always close the connection
+    console.log(chalk.gray('Connection closed.'));
   }
 };
 
-try {
-  console.log(`-> Connecting to PG using ${connectionString} ...`);
-  await client.connect();;
-  await runSchemaFiles();
-  await runSeedFiles();
-
-  await client.end();;
-} catch (err) {
-  console.error(chalk.red(`Failed due to error: ${err}`));
-  await client.end();
-}
+// Run the script
+resetDatabase();
