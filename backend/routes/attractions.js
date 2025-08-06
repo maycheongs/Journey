@@ -1,18 +1,14 @@
 
 import express from 'express';
 const router = express.Router();
-import dotenv from 'dotenv';
-dotenv.config();
-// const account = process.env.ACCOUNT_ID;
-// const token = process.env.TOKEN;
 
 import { getAttractions } from '../utils/geocoding.js';
 
 
 export default ({
-  getCoordinatesByLocationName,
+  // getCoordinatesByLocationName,
   addThenGetAttraction,
-  addAddress,
+  // addAddress,
 }) => {
 
 
