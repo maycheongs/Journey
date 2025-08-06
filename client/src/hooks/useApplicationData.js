@@ -10,6 +10,18 @@ import axios from 'axios';
 import { io } from 'socket.io-client';
 const ENDPOINT = 'http://localhost:8002';
 
+
+// Axios instance with interceptor for error logging
+const api = axios.create();
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('API Error:', error.response?.data || error.message);
+    return Promise.reject(error);
+  }
+);
+
 export default function useApplicationData() {
   const [state, dispatch] = useReducer(dataReducer, {
     user: {},

@@ -46,6 +46,16 @@ app.use('/api/users', usersRouter(userHelpers));
 app.use('/api/itineraries', apiRouter(apiHelpers));
 app.use('/api/attractions', searchRouter(searchHelpers));
 
+//global error handler
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+
+  res.status(500).json({
+    error: err.message || 'Internal Server Error',
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+  });
+});
+
 const server = http.createServer(app);
 
 const io = new SocketIO(server, {

@@ -18,6 +18,13 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:8001', // your backend
         changeOrigin: true,
+        configure: (proxy, options) => {
+          proxy.on('error', (err, req, res) => {
+            console.error('Proxy error:', err);
+          });
+          proxy.on('proxyReq', (proxyReq, req, res) => {
+            console.log('Requesting:', req.method, req.url);
+          });
       },
     },
     middlewareMode: false,
