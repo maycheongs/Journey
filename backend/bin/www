@@ -9,7 +9,7 @@ const debug = debugLib('backend:server');
 /**
  * Get port from environment and store in Express.
  */
-const port = normalizePort(process.env.PORT || '8001');
+const port = normalizePort(process.env.PORT || 8001);
 app.set('port', port);
 
 /**
@@ -62,5 +62,5 @@ function onListening() {
   const addr = server.address();
   const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
   debug(`Listening on ${bind}`);
-  console.log(`Server is running on port ${port}!`);
+  console.log(`Server is running on port ${addr.port}!`);
 }
