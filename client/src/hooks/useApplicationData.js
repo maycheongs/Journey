@@ -12,7 +12,12 @@ import { io } from 'socket.io-client';
 const ENDPOINT = 'http://localhost:8002';
 
 // Setup axios instance with interceptors
-const api = axios.create();
+const api = axios.create({
+  baseURL: import.meta.env.PROD
+    ? import.meta.env.VITE_API_BASE_URL
+    : '', // proxy works in dev
+});
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
