@@ -402,54 +402,60 @@ export default ({
     });
   });
 
-  router.post('/:itinerary_id', (req, res) => {
+  router.post('/:itinerary_id', async (req, res) => {
     const { itinerary_id } = req.params;
     const { location_name, new_day_order } = req.body;
-    addDayWithLocation(itinerary_id, location_name).then(result => {
-      if (result.message) {
-        res.send({ error: 'No such location in database' });
-      } else {
-        getDetailedItinerary(itinerary_id).then(resultArr => {
-          let newItinerary = itineraryObj(resultArr);
-          const last_day_order = newItinerary.locations
-            .slice(-1)[0]
-            .days.slice(-1)[0].day_order;
 
-          if (new_day_order && last_day_order !== new_day_order) {
-            const daysIdArr = [];
-            const daysOrderArr = [];
-            newItinerary.locations.forEach(location => {
-              location.days.forEach(day => {
-                daysIdArr.push(day.id);
-                daysOrderArr.push(day.day_order);
-              });
-            });
-            daysIdArr.splice(new_day_order - 1, 0, daysIdArr.pop());
+    try {
 
-            reorderDays(daysIdArr, daysOrderArr).then(result => {
-              if (result.message) {
-                res.send({ error: result.message });
-              } else {
-                getDetailedItinerary(itinerary_id).then(resultArr => {
-                  const parsed = itineraryObj(resultArr);
+      const day = await addDayWithLocation(itinerary_id, location_name);
 
-                  const io = req.app.get('socketio');
-
-                  io.sockets.in(Number(itinerary_id)).emit('itinerary', parsed);
-
-                  res.send(parsed);
-                });
-              }
-            });
-          } else {
-            const io = req.app.get('socketio');
-
-            io.sockets.in(newItinerary.id).emit('itinerary', newItinerary);
-            res.send(newItinerary);
-          }
-        });
+      if (day?.message) {
+        return res.status(400).json({ error: 'No such location in database' });
       }
-    });
+
+      let resultArr = await getDetailedItinerary(itinerary_id);
+      let newItinerary = itineraryObj(resultArr);
+
+      const last_day_order = newItinerary.locations
+        .slice(-1)[0]
+        .days.slice(-1)[0].day_order;
+
+      // Reorder if new_day_order is provided and differs
+      if (new_day_order && last_day_order !== new_day_order) {
+        const daysIdArr = [];
+        const daysOrderArr = [];
+        newItinerary.locations.forEach(location => {
+          location.days.forEach(day => {
+            daysIdArr.push(day.id);
+            daysOrderArr.push(day.day_order);
+          });
+        });
+
+        // Move last day to correct position
+        daysIdArr.splice(new_day_order - 1, 0, daysIdArr.pop());
+
+        const reorderResult = await reorderDays(daysIdArr, daysOrderArr);
+
+        if (reorderResult.message) {
+          return res.status(400).json({ error: reorderResult.message });
+        }
+
+        // Get the updated itinerary
+        const parsed = itineraryObj(await getDetailedItinerary(itinerary_id));
+
+        // Emit to Socket.io room
+        req.app.get('socketio').sockets.in(Number(itinerary_id)).emit('itinerary', parsed);
+
+        return res.status(200).json(parsed);
+      } else {
+        req.app.get('socketio').sockets.in(newItinerary.id).emit('itinerary', newItinerary);
+        return res.status(200).json(newItinerary);
+      }
+    } catch (err) {
+      console.error('Error in POST /:itinerary_id', err);
+      return res.status(500).json({ error: err.message });
+    }
   });
 
   router.delete('/:itinerary_id/days/:day_id', (req, res) => {
