@@ -7,9 +7,11 @@ export default function DashboardLeftNav(props) {
       <div className='sticky flex flex-col items-center w-full px-4 py-6 text-xl font-semibold text-gray-100 sm:block top-16'>
         <div className='mb-4'>
           <NavLink
-            to='/itineraries/new'
-            activeClassName='selected bg-gray-200 bg-opacity-25'
-            className='flex items-center justify-between p-4 sm:px-4 sm:py-2 hover:bg-gray-200 hover:bg-opacity-25 rounded-xl'
+            to="/itineraries/new"
+            className={({ isActive }) =>
+              `flex items-center justify-between p-4 sm:px-4 sm:py-2 rounded-xl hover:bg-gray-200 hover:bg-opacity-25 ${isActive ? 'selected bg-gray-200 bg-opacity-25' : ''
+              }`
+            }
           >
             <span className='hidden sm:flex'>New Itinerary</span>
             <svg
