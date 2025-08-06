@@ -55,6 +55,7 @@ export default function AttractionSearch(props) {
     food: false,
     cultural: false,
     nature: false,
+    facilities: false,
   });
 
   const LOADING = 'LOADING';
@@ -125,6 +126,7 @@ export default function AttractionSearch(props) {
     'Food',
     'Cultural',
     'Nature',
+    'Facilities',
   ];
 
   return (

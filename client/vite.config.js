@@ -25,6 +25,7 @@ export default defineConfig({
           proxy.on('proxyReq', (proxyReq, req, res) => {
             console.log('Requesting:', req.method, req.url);
           });
+        }
       },
     },
     middlewareMode: false,

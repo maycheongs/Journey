@@ -9,11 +9,17 @@ export default function ItineraryList(props) {
   const [itineraries, setItineraries] = useState([]);
 
   useEffect(() => {
-    return axios.get('/api/itineraries').then(res => {
-      const itineraries = res.data;
-      setItineraries(itineraries);
-      setLoading(false);
-    });
+    setLoading(true); // start loading
+
+    axios.get('/api/itineraries')
+      .then(res => {
+        setItineraries(res.data);
+        setLoading(false); // done loading
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false); // stop loading even on error
+      });
   }, [reload]);
 
   const [searchTerm, setSearchTerm] = useState('');
