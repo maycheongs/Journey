@@ -2,12 +2,13 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 import path from 'path';
 
-// Calculate the absolute path to the root .env file
+if (process.env.NODE_ENV !== 'production') {
+// Calculate the absolute path to the root .env file in development
 dotenv.config({ path: path.resolve(process.cwd(), '../.env') });
+}
+
 // Import the API key FOR opentripmap from env.
 const OTM_API_KEY = process.env.OTM_API_KEY;
-
-console.log('OTM_API_KEY:', OTM_API_KEY);
 
 
 /*

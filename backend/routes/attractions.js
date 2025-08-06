@@ -1,11 +1,10 @@
 
-import axios from 'axios';
 import express from 'express';
 const router = express.Router();
 import dotenv from 'dotenv';
 dotenv.config();
-const account = process.env.ACCOUNT_ID;
-const token = process.env.TOKEN;
+// const account = process.env.ACCOUNT_ID;
+// const token = process.env.TOKEN;
 
 import { getAttractions } from '../utils/geocoding.js';
 
@@ -15,6 +14,10 @@ export default ({
   addThenGetAttraction,
   addAddress,
 }) => {
+
+
+
+  //REFACTOR in future to send attractions as they are parsed instead of waiting for all to finish
   router.get('/:location_name/:query/:cat', async (req, res) => {
     let { query, cat, location_name } = req.params;
     // location_name = parseLocationName(location_name);

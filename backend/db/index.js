@@ -3,7 +3,10 @@ import pg from 'pg';
 import dotenv from 'dotenv';
 import path from 'path';
 
+if(process.env.NODE_ENV !== 'production') {
+  // Load environment variables from .env file in development
 dotenv.config({ path: path.resolve(process.cwd(), '../.env') });
+}
 
 const {
   DATABASE_URL,
