@@ -7,111 +7,62 @@ dotenv.config();
 const account = process.env.ACCOUNT_ID;
 const token = process.env.TOKEN;
 
-import {
-  parseAttractionObj,
-  parseLocationName,
-}  from '../utils/apiParsers.js';
+import { getAttractions } from '../utils/geocoding.js';
+
 
 export default ({
   getCoordinatesByLocationName,
   addThenGetAttraction,
   addAddress,
 }) => {
-  router.get('/:location_name/:query/:cat', (req, res) => {
+  router.get('/:location_name/:query/:cat', async (req, res) => {
     let { query, cat, location_name } = req.params;
-    location_name = parseLocationName(location_name);
+    // location_name = parseLocationName(location_name);
     if (query === 'null') query = null;
     if (cat === 'null') {
-      cat = null;
+      cat = 'interesting_places';
     } else {
       cat = cat
         .split(',')
         .map(category => {
           switch (category) {
             case 'adult':
-              return '&tag_labels=nightlife';
+              return 'adult';
             case 'amusement':
-              return '&tag_labels=amusementparks|shopping';
+              return 'amusements';
             case 'accomodation':
-              return '&tag_labels=hotels';
+              return 'accomodations';
             case 'landmark':
-              return '&tag_labels=sightseeing';
+              return 'architecture,monuments_and_memorials, religion';
             case 'nature':
-              return '&tag_labels=camping|national_park|exploringnature';
+              return 'natural';
             case 'sport':
-              return '&tag_labels=adrenaline|sports';
+              return 'sport';
             case 'food':
-              return '&tag_labels=cuisine';
+              return 'foods';
             case 'cultural':
-              return '&tag_labels=culture|history|museums';
+              return 'historic,cultural';
+            case 'facilities':
+              return 'banks,shops,transport'; 
             default:
-              return '&tag_labels=landmarks';
+              return 'interesting_places';
           }
         })
-        .join('');
+        .join(',');
     }
 
-    axios
-      .get(
-        `https://www.triposo.com/api/20201111/poi.json?location_id=${location_name}${
-          cat ? cat : ''
-        }&count=10&fields=id,name,score,images,snippet,tag_labels,coordinates,properties&order_by=-score${
-          query ? `&annotate=trigram:${query}&trigram=>=0.3` : ''
-        }&account=${account}&token=${token}`
-      )
-      .then(result => {
-        Promise.all(
-          result.data.results.map(result => {
-            let attraction = parseAttractionObj(result);
-            return addThenGetAttraction(attraction);
-          })
-        )
-          .then(attractions => {
-            const placesWithNoAddress = [];
-            const placesWithAddress = [];
-            attractions.forEach(attraction => {
-              if (attraction.address === 'not in database') {
-                placesWithNoAddress.push(attraction);
-              } else {
-                placesWithAddress.push(attraction);
-              }
-            });
-            if (placesWithNoAddress.length > 0) {
-              Promise.all(
-                placesWithNoAddress.map(attraction => {
-                  const { x, y } = attraction.location;
-                  return axios.get(
-                    `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${x}&lon=${y}`
-                  );
-                })
-              )
-                .then(results => {
-                  const idToUpdate = [];
-                  const addressToUpdate = [];
-                  results.forEach((result, index) => {
-                    placesWithNoAddress[index].address =
-                      result.data.display_name;
-                    idToUpdate.push(placesWithNoAddress[index].id);
-                    addressToUpdate.push(result.data.display_name);
-                  });
-                  Promise.all(
-                    idToUpdate.map((id, index) => {
-                      addAddress(id, addressToUpdate[index]);
-                    })
-                  ).catch(err => console.log(err));
-                  res.send([...placesWithAddress, ...placesWithNoAddress]);
-                })
-                .catch(err => {
-                  res.send(placesWithAddress);
-                  console.log('err', placesWithAddress);
-                });
-            } else {
-              res.send(placesWithAddress);
-            }
-          })
-          .catch(err => console.log(err));
-      })
-      .catch(err => console.log(err));
+
+    try {
+      let attractions = await getAttractions(location_name, { category: cat, query})
+      attractions = await Promise.all(attractions.map(attraction => addThenGetAttraction(attraction)));
+      console.log('Attractions fetched:', attractions.length);
+      return attractions.length ? res.send(attractions) : res.status(404).send({ error: 'No attractions found' });
+    } catch (error) {
+      console.error('Error fetching attractions:', error);
+      return res.status(500).send({ error: 'Failed to fetch attractions' });
+    }
+
+
   });
 
   return router;

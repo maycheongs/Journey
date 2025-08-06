@@ -19,7 +19,8 @@ CREATE TYPE "attraction_type" AS ENUM (
   'sport',
   'food',
   'cultural',
-  'nature'
+  'nature',
+  'facilities'
 );
 
 DROP TABLE IF EXISTS users CASCADE;

@@ -1,3 +1,5 @@
+import { parseLocationName } from "../utils/geocoding.js";
+
 export default db => {
   const getAllItineraries = () => {
     const query = {
@@ -180,48 +182,81 @@ export default db => {
       .catch(err => err);
   };
 
-  const convertLocationLetters = locationName => {
-    switch (locationName) {
-      case 'Malmo':
-        return 'Malmö';
-      case 'Zurich':
-        return 'Zürich';
-      case 'Dusseldorf':
-        return 'Düsseldorf';
-      case 'Fussen':
-        return 'Füssen';
-      case 'Lubeck':
-        return 'Lübeck';
-      case 'Wurzberg':
-        return 'Würzburg';
-      case 'Cancun':
-        return 'Cancún';
-      case 'Pecs':
-        return 'Pécs';
-      case 'Malaga':
-        return 'Málaga';
-      case 'Sao Paulo':
-        return 'São Paulo';
-      default:
-        return locationName;
-    }
-  };
+  // const convertLocationLetters = locationName => {
+  //   switch (locationName) {
+  //     case 'Malmo':
+  //       return 'Malmö';
+  //     case 'Zurich':
+  //       return 'Zürich';
+  //     case 'Dusseldorf':
+  //       return 'Düsseldorf';
+  //     case 'Fussen':
+  //       return 'Füssen';
+  //     case 'Lubeck':
+  //       return 'Lübeck';
+  //     case 'Wurzberg':
+  //       return 'Würzburg';
+  //     case 'Cancun':
+  //       return 'Cancún';
+  //     case 'Pecs':
+  //       return 'Pécs';
+  //     case 'Malaga':
+  //       return 'Málaga';
+  //     case 'Sao Paulo':
+  //       return 'São Paulo';
+  //     default:
+  //       return locationName;
+  //   }
+  // };
 
-  const addDayWithLocation = (itineraryId, locationName) => {
+  const addDayWithLocation = async (itineraryId, locationName) => {
+
+    const parsedName = await parseLocationName(locationName)
     const query = {
-      text: `INSERT INTO days (itinerary_id,location_id,day_order )
-    VALUES($1,
-      (select id from locations where name = $2 OR name iLIKE $2 LIMIT 1), 
-      (select coalesce(max(day_order),0) from days where itinerary_id = $1)+1)
-    RETURNING *;`,
-      values: [itineraryId, convertLocationLetters(locationName)],
+      text: `
+    WITH existing AS (
+      SELECT id 
+      FROM locations 
+      WHERE name = $2 OR name ILIKE $2
+      LIMIT 1
+    ),
+    inserted AS (
+      INSERT INTO locations (name)
+      SELECT $2
+      WHERE NOT EXISTS (SELECT 1 FROM existing)
+      RETURNING id
+    ),
+    loc AS (
+      SELECT id FROM existing
+      UNION ALL
+      SELECT id FROM inserted
+    ),
+    next_order AS (
+      SELECT COALESCE(MAX(day_order), 0) + 1 AS day_order
+      FROM days
+      WHERE itinerary_id = $1
+    )
+    INSERT INTO days (itinerary_id, location_id, day_order)
+    SELECT 
+      $1, 
+      (SELECT id FROM loc LIMIT 1), 
+      (SELECT day_order FROM next_order)
+    RETURNING *;
+  `,
+      values: [itineraryId, parsedName],
     };
-    return db
-      .query(query)
-      .then(result => {
-        return result.rows[0];
-      })
-      .catch(err => err);
+    try {
+      const result = await db.query(query);
+      if (result.rows.length === 0) {
+        console.warn('No row returned from INSERT. Check if $2 is valid:', parsedName);
+        return null;
+      }
+
+      return result.rows[0];
+
+    } catch (err) {
+      throw new Error (`Database Error: Error encountered while adding location ${locationName} into a new day for itinerary ${itineraryId} `, err)
+    }
   };
   const getItinerary = itineraryId => {
     const query = {
