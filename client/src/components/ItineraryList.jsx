@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import {api} from '../hooks/useApplicationData';
 
 import ItineraryListItem from './ItineraryListItem';
 
@@ -11,7 +11,7 @@ export default function ItineraryList(props) {
   useEffect(() => {
     setLoading(true); // start loading
 
-    axios.get('/api/itineraries')
+    api.get('/api/itineraries')
       .then(res => {
         setItineraries(res.data);
         setLoading(false); // done loading
