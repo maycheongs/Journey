@@ -2,7 +2,7 @@
 
 import http from 'http';
 import debugLib from 'debug';
-import app from '../app.js';
+import app, {setupSocketIO} from '../app.js';
 
 const debug = debugLib('backend:server');
 
@@ -16,6 +16,9 @@ app.set('port', port);
  * Create HTTP server.
  */
 const server = http.createServer(app);
+
+// Setup Socket.IO with the server and app
+setupSocketIO(server, app);
 
 /**
  * Listen on provided port, on all network interfaces.

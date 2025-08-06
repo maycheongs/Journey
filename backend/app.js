@@ -56,29 +56,53 @@ app.use((err, req, res, next) => {
   });
 });
 
-const server = http.createServer(app);
+// const server = http.createServer(app);
 
-const io = new SocketIO(server, {
-  cors: {
-    origin: ['http://localhost:8000', 'http://127.0.0.1:8000'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  },
-});
+// const io = new SocketIO(server, {
+//   cors: {
+//     origin: ['http://localhost:8000', 'http://127.0.0.1:8000'],
+//     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//   },
+// });
 
-app.set('socketio', io);
+// app.set('socketio', io);
 
-io.on('connection', (socket) => {
-  console.log('New client connected');
+// io.on('connection', (socket) => {
+//   console.log('New client connected');
 
-  socket.on('itinerary_id', (id) => {
-    socket.join(id);
+//   socket.on('itinerary_id', (id) => {
+//     socket.join(id);
+//   });
+
+//   socket.on('disconnect', () => {
+//     console.log('Client disconnected');
+//   });
+// });
+
+// server.listen(port, () => console.log(`Listening on port ${port}`));
+
+export function setupSocketIO(server, app) {
+  const io = new SocketIO(server, {
+    cors: {
+      origin: ['http://localhost:8000', 'http://127.0.0.1:8000'],
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    },
   });
 
-  socket.on('disconnect', () => {
-    console.log('Client disconnected');
-  });
-});
+  app.set('socketio', io);
 
-server.listen(port, () => console.log(`Listening on port ${port}`));
+  io.on('connection', (socket) => {
+    console.log('New client connected');
+
+    socket.on('itinerary_id', (id) => {
+      socket.join(id);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Client disconnected');
+    });
+  });
+}
+
 
 export default app;
