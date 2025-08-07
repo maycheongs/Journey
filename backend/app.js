@@ -1,5 +1,4 @@
 import express from 'express';
-import http from 'http';
 import { Server as SocketIO } from 'socket.io'; 
 import path from 'path';
 import { dirname } from 'path';
@@ -11,8 +10,6 @@ import cookieSession from 'cookie-session';
 import logger from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
-
-const port = process.env.PORT || 8002;
 
 import usersRouter from './routes/users.js';
 import apiRouter from './routes/itineraries.js';
@@ -52,7 +49,7 @@ app.use((err, req, res, next) => {
 
   res.status(500).json({
     error: err.message || 'Internal Server Error',
-    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+    stack: process.env.NODE_ENV !== 'production' ? err.stack : undefined,
   });
 });
 

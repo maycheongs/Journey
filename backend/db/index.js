@@ -38,7 +38,7 @@ function createClient() {
 
   client.connect()
     .then(() => console.log('✅ Database connected successfully'))
-    .catch(err => console.error('❌ Initial DB connection error:', err));
+    .catch(err => console.error('❌ Initial DB connection error:', err, 'Stack Trace:', err.stack));
 
   // --- Handle unexpected errors ---
   client.on('error', (err) => {
