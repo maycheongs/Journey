@@ -22,23 +22,20 @@ export default ({
     res.send({ message: 'successful logout' });
   });
 
-  router.post('/login', (req, res) => {
+  router.post('/login', async (req, res) => {
     const { email, password } = req.body;
-    getUserByEmail(email).then(user => {
+    try {
+      const user = await getUserByEmail(email);
       if (!user || !bcrypt.compareSync(password, user.password)) {
         return res.status(401).json({ error: 'Invalid credentials' });
       }
-      if (user && bcrypt.compareSync(req.body.password, user.password)) {
-        req.session.userId = user.id;
-        console.log('Session set:', req.session); // Debug
-        const { id, email, first_name, last_name } = user;
-        const parsed = { id, email, first_name, last_name };
-        res.send(parsed);
-      } else {
-        console.error('Login error:', err);
-        res.status(500).json({ error: 'Server error' });
-      }
-    });
+      req.session.userId = user.id;
+      console.log('Session set:', req.session); // Debug
+      res.json({ id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name });
+    } catch (err) {
+      console.error('Login error:', err);
+      res.status(500).json({ error: 'Server error' });
+    }
   });
 
   router.get('/:user_id', (req, res) => {
