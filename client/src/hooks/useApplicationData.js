@@ -9,12 +9,14 @@ import dataReducer, {
 import axios from 'axios';
 import { io } from 'socket.io-client';
 
-const ENDPOINT = 'http://localhost:8002';
+const ENDPOINT = import.meta.env.PROD
+  ? import.meta.env.VITE_API_URL
+  : 'http://localhost:8002';
 
 // Setup axios instance with interceptors
 export const api = axios.create({
   baseURL: import.meta.env.PROD
-    ? import.meta.env.VITE_API_BASE_URL
+    ? import.meta.env.VITE_API_URL
     : undefined, // proxy works in dev
 });
 
