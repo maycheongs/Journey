@@ -32,12 +32,19 @@ app.use(
     keys: ['key1', 'key2'],
   })
 );
+
+const origin = process.env.NODE_ENV === 'production' ?  process.env.FRONTEND_URL : 'http://localhost:8000' 
+
+ 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+  origin,
+  credentials: true,
+}));
 
 app.use('/api/users', usersRouter(userHelpers));
 app.use('/api/itineraries', apiRouter(apiHelpers));

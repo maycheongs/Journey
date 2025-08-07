@@ -18,6 +18,7 @@ export const api = axios.create({
   baseURL: import.meta.env.PROD
     ? import.meta.env.VITE_API_URL
     : undefined, // proxy works in dev
+    withCredentials: true, // include cookies for CORS
 });
 
 api.interceptors.response.use(
@@ -79,7 +80,16 @@ export default function useApplicationData() {
   // }, [state.user.id]);
 
   // --- Authentication ---
-  const login = (email, password) => api.post('/api/users/login', { email, password });
+  const login = async (email, password) => {
+  try {
+    const response = await api.post('/api/users/login', { email, password });
+    dispatch({ type: SET_USER, user: response.data });
+    return response;
+  } catch (error) {
+    console.error('Login failed:', error.response?.data || error.message);
+    throw error;
+  }
+};
   const logout = () =>
     api.post('/api/users/logout').then(() => dispatch({ type: SET_USER, user: {} }));
   const register = (first_name, last_name, email, password) =>
