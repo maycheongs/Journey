@@ -28,6 +28,7 @@ const app = express();
 
 // CORS configuration
 const origin = process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : 'http://localhost:8000';
+console.log('CORS origin:', origin); //DEBUG
 app.use(cors({
   origin,
   credentials: true,
@@ -56,7 +57,9 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false, // Disable CSP to avoid conflicts with CORS
+}));
 
 app.use('/api/users', usersRouter(userHelpers));
 app.use('/api/itineraries', apiRouter(apiHelpers));
@@ -74,14 +77,13 @@ app.use((err, req, res, next) => {
 
 
 export function setupSocketIO(server, app) {
-  let origin = ['http://localhost:8000', 'http://127.0.0.1:8000']
-  if (process.env.NODE_ENV === 'production') {
-    origin = [process.env.FRONTEND_URL];
-  } 
+  const socketOrigin = process.env.NODE_ENV === 'production' ? [process.env.FRONTEND_URL] : ['http://localhost:8000', 'http://127.0.0.1:8000'];
+  console.log('Socket.io CORS origin:', socketOrigin); // Debug
   const io = new SocketIO(server, {
     cors: {
-      origin,
-      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      origin: socketOrigin,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      credentials: true,
     },
   });
 
