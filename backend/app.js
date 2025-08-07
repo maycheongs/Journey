@@ -26,29 +26,38 @@ const searchHelpers = searchHelpersFactory(db);
 
 const app = express();
 
-app.use(cookieSession({
-  name: 'session',
-  keys: ['your-secret-key-1', 'your-secret-key-2'], // Use two secure keys
-  maxAge: 24 * 60 * 60 * 1000, // 24 hours
-  secure: process.env.NODE_ENV === 'production', // HTTPS in production
-  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Allow cross-site cookies
-  httpOnly: true, // Prevent JavaScript access
+// CORS configuration
+const origin = process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : 'http://localhost:8000';
+app.use(cors({
+  origin,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-const origin = process.env.NODE_ENV === 'production' ?  process.env.FRONTEND_URL : 'http://localhost:8000' 
+// Handle CORS preflight requests
+app.options('*', cors({
+  origin,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
+app.use(cookieSession({
+  name: 'session',
+  keys: ['your-secret-key-1', 'your-secret-key-2'],
+  maxAge: 24 * 60 * 60 * 1000,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  httpOnly: true,
+}));
  
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(helmet());
-app.use(cors({
-  origin,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+
 app.use('/api/users', usersRouter(userHelpers));
 app.use('/api/itineraries', apiRouter(apiHelpers));
 app.use('/api/attractions', searchRouter(searchHelpers));
