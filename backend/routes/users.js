@@ -24,13 +24,18 @@ export default ({
 
   router.post('/login', (req, res) => {
     getUserByEmail(req.body.email).then(user => {
+      if (!user || !bcrypt.compareSync(password, user.password)) {
+        return res.status(401).json({ error: 'Invalid credentials' });
+      }
       if (user && bcrypt.compareSync(req.body.password, user.password)) {
         req.session.userId = user.id;
+        console.log('Session set:', req.session); // Debug
         const { id, email, first_name, last_name } = user;
         const parsed = { id, email, first_name, last_name };
         res.send(parsed);
       } else {
-        res.send({ error: 'Error' });
+        console.error('Login error:', err);
+        res.status(500).json({ error: 'Server error' });
       }
     });
   });
@@ -98,16 +103,20 @@ export default ({
       );
   });
 
-  router.get('/:user_id/itineraries', (req, res) => {
-    const userId = req.session.userId;
-
-    if (userId) {
-      getItinerariesForGroup(userId).then(itineraries => {
-        res.send(itineraries);
-      });
-    } else {
-      res.send({ error: 'You must be logged in to get itineraries' });
+  router.get('/:user_id/itineraries', async (req, res) => {
+    const { user_id } = req.params;
+    if (req.session.userId != user_id) {
+      return res.status(403).json({ error: 'Unauthorized access to itineraries' });
     }
+
+    try {
+      const result = await getItinerariesForGroup(user_id);
+      res.send(result);
+    } catch (err) {
+      console.log('Error fetching itineraries:', err);
+      res.status(500).json({ error: 'Failed to fetch itineraries' });
+    }
+
   });
 
   router.get('/:user_id/bookmarks', (req, res) => {

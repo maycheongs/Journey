@@ -26,12 +26,14 @@ const searchHelpers = searchHelpersFactory(db);
 
 const app = express();
 
-app.use(
-  cookieSession({
-    name: 'session',
-    keys: ['key1', 'key2'],
-  })
-);
+app.use(cookieSession({
+  name: 'session',
+  keys: ['your-secret-key-1', 'your-secret-key-2'], // Use two secure keys
+  maxAge: 24 * 60 * 60 * 1000, // 24 hours
+  secure: process.env.NODE_ENV === 'production', // HTTPS in production
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Allow cross-site cookies
+  httpOnly: true, // Prevent JavaScript access
+}));
 
 const origin = process.env.NODE_ENV === 'production' ?  process.env.FRONTEND_URL : 'http://localhost:8000' 
 
@@ -44,8 +46,9 @@ app.use(helmet());
 app.use(cors({
   origin,
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
-
 app.use('/api/users', usersRouter(userHelpers));
 app.use('/api/itineraries', apiRouter(apiHelpers));
 app.use('/api/attractions', searchRouter(searchHelpers));
