@@ -23,7 +23,8 @@ export default ({
   });
 
   router.post('/login', (req, res) => {
-    getUserByEmail(req.body.email).then(user => {
+    const { email, password } = req.body;
+    getUserByEmail(email).then(user => {
       if (!user || !bcrypt.compareSync(password, user.password)) {
         return res.status(401).json({ error: 'Invalid credentials' });
       }
