@@ -53,35 +53,15 @@ app.use((err, req, res, next) => {
   });
 });
 
-// const server = http.createServer(app);
-
-// const io = new SocketIO(server, {
-//   cors: {
-//     origin: ['http://localhost:8000', 'http://127.0.0.1:8000'],
-//     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-//   },
-// });
-
-// app.set('socketio', io);
-
-// io.on('connection', (socket) => {
-//   console.log('New client connected');
-
-//   socket.on('itinerary_id', (id) => {
-//     socket.join(id);
-//   });
-
-//   socket.on('disconnect', () => {
-//     console.log('Client disconnected');
-//   });
-// });
-
-// server.listen(port, () => console.log(`Listening on port ${port}`));
 
 export function setupSocketIO(server, app) {
+  let origin = ['http://localhost:8000', 'http://127.0.0.1:8000']
+  if (process.env.NODE_ENV === 'production') {
+    origin = [process.env.FRONTEND_URL];
+  } 
   const io = new SocketIO(server, {
     cors: {
-      origin: ['http://localhost:8000', 'http://127.0.0.1:8000'],
+      origin,
       methods: ['GET', 'POST', 'PUT', 'DELETE'],
     },
   });
