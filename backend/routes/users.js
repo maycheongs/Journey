@@ -26,6 +26,7 @@ export default ({
     const { email, password } = req.body;
     try {
       const user = await getUserByEmail(email);
+      console.log('Login attempt:', user, 'password', password); // Debug
       if (!user || !bcrypt.compareSync(password, user.password)) {
         return res.status(401).json({ error: 'Invalid credentials' });
       }
