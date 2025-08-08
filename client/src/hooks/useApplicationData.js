@@ -68,10 +68,18 @@ export default function useApplicationData() {
   // Fetch user on initial mount if not loaded
   useEffect(() => {
     const checkUser = async () => {
+      // Skip if no session cookie or user in localStorage
+      const hasSessionCookie = document.cookie.includes('session=');
+      const storedUser = localStorage.getItem('user');
+      console.log('Initial check - localStorage user:', storedUser, 'Has session cookie:', hasSessionCookie); // Debug
+      if (!hasSessionCookie && !storedUser) {
+        console.log('No session cookie or user, skipping /api/users/me'); // Debug
+        dispatch({ type: SET_USER, user: {} });
+        return;
+      }
+
       try {
-        const response = await api.get('/api/users/me', {
-          headers: { 'Cache-Control': 'no-cache' },
-        });
+        const response = await api.get('/api/users/me'); // Removed Cache-Control
         console.log('Fetched user from /me:', response.data); // Debug
         if (response.data.id) {
           dispatch({ type: SET_USER, user: response.data });
@@ -86,7 +94,6 @@ export default function useApplicationData() {
         localStorage.removeItem('user');
       }
     };
-    console.log('Initial localStorage user:', localStorage.getItem('user')); // Debug
     checkUser();
   }, []);
 
@@ -112,9 +119,7 @@ const login = async (email, password) => {
   useEffect(() => {
     if (state.user.id) {
       console.log('Fetching itineraries for user ID:', state.user.id); // Debug
-      api.get(`/api/users/${state.user.id}/itineraries`, {
-        headers: { 'Cache-Control': 'no-cache' },
-      }).then(res => {
+      api.get(`/api/users/${state.user.id}/itineraries`).then(res => {
         const myItineraries = res.data;
 
         if (Array.isArray(myItineraries) && myItineraries.length > 0) {
