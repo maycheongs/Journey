@@ -18,7 +18,7 @@ export const api = axios.create({
   baseURL: import.meta.env.PROD
     ? import.meta.env.VITE_API_URL
     : undefined, // proxy works in dev
-    withCredentials: true, // include cookies for CORS
+  withCredentials: true, // include cookies for CORS
 });
 
 api.interceptors.response.use(
@@ -67,26 +67,37 @@ export default function useApplicationData() {
 
   // Fetch user on initial mount if not loaded
   useEffect(() => {
-    if (!state.user.id) {
-      console.log('Fetching user data...');
-      api.defaults.withCredentials = true; // Ensure cookies are sent with requests  
-      api.get(`/api/users/me`)
-        .then((res) => {
-          if (res.data.id) {
-            dispatch({ type: SET_USER, user: res.data });
-          }
-        })
-        .catch((err) => console.error('Failed to fetch user:', err.message));
-    }
-  }, [state.user.id]);
+    const checkUser = async () => {
+      try {
+        const response = await api.get('/api/users/me', {
+          headers: { 'Cache-Control': 'no-cache' },
+        });
+        console.log('Fetched user from /me:', response.data); // Debug
+        if (response.data.id) {
+          dispatch({ type: SET_USER, user: response.data });
+          localStorage.setItem('user', JSON.stringify(response.data));
+        } else {
+          dispatch({ type: SET_USER, user: {} });
+          localStorage.removeItem('user');
+        }
+      } catch (err) {
+        console.error('Failed to fetch user from /me:', err.response?.data || err.message);
+        dispatch({ type: SET_USER, user: {} });
+        localStorage.removeItem('user');
+      }
+    };
+    console.log('Initial localStorage user:', localStorage.getItem('user')); // Debug
+    checkUser();
+  }, []);
 
   // --- Authentication ---
-  const login = async (email, password) => {
+const login = async (email, password) => {
   try {
-    api.defaults.withCredentials = true; // Ensure cookies are sent with requests
     const response = await api.post('/api/users/login', { email, password });
+    console.log('Login response:', response.data, 'Cookies:', document.cookie); // Debug
     dispatch({ type: SET_USER, user: response.data });
-    return response;
+    localStorage.setItem('user', JSON.stringify(response.data));
+    return response.data;
   } catch (error) {
     console.error('Login failed:', error.response?.data || error.message);
     throw error;
@@ -99,19 +110,22 @@ export default function useApplicationData() {
 
   // --- Itinerary CRUD ---
   useEffect(() => {
-      if (state.user.id) {
-        api.get(`/api/users/${state.user.id}/itineraries`).then(res => {
-          const myItineraries = res.data;
-  
-          if (Array.isArray(myItineraries) && myItineraries.length > 0) {
-            dispatch({
-              type: SET_MY_ITINERARIES,
-              myItineraries: myItineraries,
-            });
-          }
-        });
-      }
-    }, [state.user, state.itinerary?.id]);
+    if (state.user.id) {
+      console.log('Fetching itineraries for user ID:', state.user.id); // Debug
+      api.get(`/api/users/${state.user.id}/itineraries`, {
+        headers: { 'Cache-Control': 'no-cache' },
+      }).then(res => {
+        const myItineraries = res.data;
+
+        if (Array.isArray(myItineraries) && myItineraries.length > 0) {
+          dispatch({
+            type: SET_MY_ITINERARIES,
+            myItineraries: myItineraries,
+          });
+        }
+      });
+    }
+  }, [state.user, state.itinerary?.id]);
   const createItinerary = (itinerary, visibility) =>
     api.post('/api/itineraries', { ...itinerary, visible: visibility });
 
@@ -193,20 +207,20 @@ export default function useApplicationData() {
       });
 
   // --- Bookmarks ---
-    useEffect(() => {
-      if (state.user.id) {
-        api.get(`/api/users/${state.user.id}/bookmarks`).then(res => {
-          const bookmarks = res.data;
-  
-          if (Array.isArray(bookmarks) && bookmarks.length > 0) {
-            dispatch({
-              type: SET_BOOKMARKS,
-              bookmarks: bookmarks,
-            });
-          }
-        });
-      }
-    }, [state.user?.id]);
+  useEffect(() => {
+    if (state.user.id) {
+      api.get(`/api/users/${state.user.id}/bookmarks`).then(res => {
+        const bookmarks = res.data;
+
+        if (Array.isArray(bookmarks) && bookmarks.length > 0) {
+          dispatch({
+            type: SET_BOOKMARKS,
+            bookmarks: bookmarks,
+          });
+        }
+      });
+    }
+  }, [state.user?.id]);
   const addBookmark = (itineraryId) =>
     api.post(`/api/users/${state.user.id}/bookmarks`, { itineraryId });
 
@@ -275,32 +289,32 @@ export default function useApplicationData() {
     return () => window.removeEventListener('resize', handleWindowResize);
   }, []);
 
-const socketRef = useRef(null);
+  const socketRef = useRef(null);
 
-useEffect(() => {
-  if (!state.itinerary?.id) return;
+  useEffect(() => {
+    if (!state.itinerary?.id) return;
 
-  if (!socketRef.current) {
-    // Create socket only once
-    socketRef.current = io(ENDPOINT);
+    if (!socketRef.current) {
+      // Create socket only once
+      socketRef.current = io(ENDPOINT);
 
-    socketRef.current.on('connect', () => {
-      console.log('Connected to Socket.IO server');
-    });
+      socketRef.current.on('connect', () => {
+        console.log('Connected to Socket.IO server');
+      });
 
-    socketRef.current.on('itinerary', (data) => {
-      dispatch({ type: SET_ITINERARY, itinerary: { ...state.itinerary, ...data } });
-    });
-  }
+      socketRef.current.on('itinerary', (data) => {
+        dispatch({ type: SET_ITINERARY, itinerary: { ...state.itinerary, ...data } });
+      });
+    }
 
-  // Join the new itinerary room
-  socketRef.current.emit('itinerary_id', state.itinerary.id);
+    // Join the new itinerary room
+    socketRef.current.emit('itinerary_id', state.itinerary.id);
 
-  // return () => {
-  //   socketRef.current.disconnect();
-  //   socketRef.current = null;
-  // };
-}, [state.itinerary,state.itinerary?.id]);
+    // return () => {
+    //   socketRef.current.disconnect();
+    //   socketRef.current = null;
+    // };
+  }, [state.itinerary, state.itinerary?.id]);
 
   return {
     state,

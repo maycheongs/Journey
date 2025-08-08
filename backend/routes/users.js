@@ -25,19 +25,18 @@ export default ({
   router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
-      const user = await          getUserByEmail(email);
+      const user = await userHelpers.getUserByEmail(email);
       if (!user || !bcrypt.compareSync(password, user.password)) {
         return res.status(401).json({ error: 'Invalid credentials' });
       }
       req.session.userId = user.id;
-      console.log('Session set:', req.session); // Debug
+      console.log('Login - Session set:', req.session, 'User ID:', user.id, 'Cookies:', req.headers.cookie); // Debug
       res.json({ id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name });
     } catch (err) {
       console.error('Login error:', err);
       res.status(500).json({ error: 'Server error' });
     }
   });
-
   router.get('/:user_id', (req, res) => {
     getUser(req.session.userId)
       .then(user => {
@@ -102,14 +101,16 @@ export default ({
   });
 
   router.get('/me', async (req, res) => {
+    console.log('GET /me - Session:', req.session, 'Cookies:', req.headers.cookie); // Debug
     if (!req.session.userId) {
       return res.status(401).json({ error: 'Not authenticated' });
     }
     try {
-      const user = await getUser(req.session.userId);
+      const user = await userHelpers.getUserById(req.session.userId);
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
       }
+      console.log('GET /me - User:', user); // Debug
       res.json({ id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name });
     } catch (err) {
       console.error('Get user error:', err);
