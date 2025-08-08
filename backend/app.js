@@ -79,6 +79,17 @@ app.use((err, req, res, next) => {
   });
 });
 
+//middleware to log all response headers
+app.use((req, res, next) => {
+  const originalEnd = res.end;
+  res.end = function (...args) {
+    console.log('➡️ Response headers:', res.getHeaders());
+    originalEnd.apply(res, args);
+  };
+  next();
+});
+
+
 
 export function setupSocketIO(server, app) {
   const socketOrigin = process.env.NODE_ENV === 'production' ? [process.env.FRONTEND_URL] : ['http://localhost:8000', 'http://127.0.0.1:8000'];
