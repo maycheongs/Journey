@@ -29,6 +29,7 @@ const app = express();
 // CORS configuration
 const origin = process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : 'http://localhost:8000';
 console.log('CORS origin:', origin); //DEBUG
+
 app.use(cors({
   origin,
   credentials: true,
@@ -45,7 +46,6 @@ app.options('*', cors({
 }));
 
 //for debug only remove later
-import session from 'express-session';
 
 app.use(session({
   name: 'session',
