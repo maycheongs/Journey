@@ -30,7 +30,7 @@ export default ({
         return res.status(401).json({ error: 'Invalid credentials' });
       }
       req.session.userId = user.id;
-      req.session.modified = true; //force cookie-session to set cookie
+      // req.session.modified = true; //force cookie-session to set cookie
 
       console.log('Login - Session set:', req.session, 'User ID:', user.id, 'Cookies:', req.headers.cookie); // Debug
 

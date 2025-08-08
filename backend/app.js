@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-import cookieSession from 'cookie-session';
+import session from 'express-session';
 import logger from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -44,13 +44,17 @@ app.options('*', cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-app.use(cookieSession({
+app.use(session({
   name: 'session',
   keys: ['your-secret-key-1', 'your-secret-key-2'],
-  maxAge: 24 * 60 * 60 * 1000,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-  httpOnly: true,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { 
+    secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+    httpOnly: true,
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-site cookies in production
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+  },
 }));
  
 app.use(logger('dev'));
