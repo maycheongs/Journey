@@ -46,7 +46,7 @@ app.options('*', cors({
 
 app.use(session({
   name: 'session',
-  keys: ['your-secret-key-1', 'your-secret-key-2'],
+  secret: 'a-secret-key',
   resave: false,
   saveUninitialized: false,
   cookie: { 
