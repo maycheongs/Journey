@@ -67,35 +67,27 @@ export default function useApplicationData() {
 
   // Fetch user on initial mount if not loaded
   useEffect(() => {
-    const checkUser = async () => {
-      // Skip if no session cookie or user in localStorage
-      const hasSessionCookie = document.cookie.includes('session=');
-      const storedUser = localStorage.getItem('user');
-      console.log('Initial check - localStorage user:', storedUser, 'Has session cookie:', hasSessionCookie); // Debug
-      if (!hasSessionCookie && !storedUser) {
-        console.log('No session cookie or user, skipping /api/users/me'); // Debug
-        dispatch({ type: SET_USER, user: {} });
-        return;
-      }
-
-      try {
-        const response = await api.get('/api/users/me'); // Removed Cache-Control
-        console.log('Fetched user from /me:', response.data); // Debug
-        if (response.data.id) {
-          dispatch({ type: SET_USER, user: response.data });
-          localStorage.setItem('user', JSON.stringify(response.data));
-        } else {
-          dispatch({ type: SET_USER, user: {} });
-          localStorage.removeItem('user');
-        }
-      } catch (err) {
-        console.error('Failed to fetch user from /me:', err.response?.data || err.message);
+  const checkUser = async () => {
+    const storedUser = localStorage.getItem('user');
+    console.log('Initial check - localStorage user:', storedUser); // Debug
+    try {
+      const response = await api.get('/api/users/me');
+      console.log('Fetched user from /me:', response.data); // Debug
+      if (response.data.id) {
+        dispatch({ type: SET_USER, user: response.data });
+        localStorage.setItem('user', JSON.stringify(response.data));
+      } else {
         dispatch({ type: SET_USER, user: {} });
         localStorage.removeItem('user');
       }
-    };
-    checkUser();
-  }, []);
+    } catch (err) {
+      console.error('Failed to fetch user from /me:', err.response?.data || err.message);
+      dispatch({ type: SET_USER, user: {} });
+      localStorage.removeItem('user');
+    }
+  };
+  checkUser();
+}, []);
 
   // --- Authentication ---
 const login = async (email, password) => {
