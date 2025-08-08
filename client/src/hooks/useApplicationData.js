@@ -99,7 +99,7 @@ const login = async (email, password) => {
     console.log('Login response:', response.data, 'Cookies:', document.cookie, 'Set-Cookie:', response.headers['set-cookie']); // Debug
     dispatch({ type: SET_USER, user: response.data });
     localStorage.setItem('user', JSON.stringify(response.data));
-    return response.data;
+    return response;
   } catch (error) {
     console.error('Login failed:', error.response?.data || error.message);
     throw error;

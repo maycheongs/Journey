@@ -81,10 +81,13 @@ app.use(session({ secret: 'keyboard cat', cookie: {}}))
 
 //middleware to log all response headers
 app.use((req, res, next) => {
-  const originalEnd = res.end;
-  res.end = function (...args) {
-    console.log('➡️ Response headers:', res.getHeaders());
-    originalEnd.apply(res, args);
+  console.log('Incoming request:', req.method, req.url, 'Session:', req.session, 'Cookies:', req.headers.cookie, 'SessionID:', req.sessionID);
+  const originalSetHeader = res.setHeader;
+  res.setHeader = function (name, value) {
+    if (name.toLowerCase() === 'set-cookie') {
+      console.log('Setting Set-Cookie:', value);
+    }
+    originalSetHeader.apply(res, [name, value]);
   };
   next();
 });
