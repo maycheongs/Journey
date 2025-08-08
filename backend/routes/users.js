@@ -25,7 +25,7 @@ export default ({
   router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
-      const user = await getUserByEmail(email);
+      const user = await          getUserByEmail(email);
       if (!user || !bcrypt.compareSync(password, user.password)) {
         return res.status(401).json({ error: 'Invalid credentials' });
       }
@@ -99,6 +99,22 @@ export default ({
           error: err.message,
         })
       );
+  });
+
+  router.get('/me', async (req, res) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+    try {
+      const user = await getUser(req.session.userId);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      res.json({ id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name });
+    } catch (err) {
+      console.error('Get user error:', err);
+      res.status(500).json({ error: 'Server error' });
+    }
   });
 
   router.get('/:user_id/itineraries', async (req, res) => {

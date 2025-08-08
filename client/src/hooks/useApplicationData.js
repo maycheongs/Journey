@@ -65,23 +65,25 @@ export default function useApplicationData() {
 
 
 
-  // // 🔹 Fetch user on initial mount if not loaded
-  // useEffect(() => {
-  //   if (!state.user.id) {
-  //     // Replace 1 with your actual logged-in user ID logic if needed
-  //     api.get(`/api/users/1`)
-  //       .then((res) => {
-  //         if (res.data.id) {
-  //           dispatch({ type: SET_USER, user: res.data });
-  //         }
-  //       })
-  //       .catch((err) => console.error('Failed to fetch user:', err.message));
-  //   }
-  // }, [state.user.id]);
+  // Fetch user on initial mount if not loaded
+  useEffect(() => {
+    if (!state.user.id) {
+      console.log('Fetching user data...');
+      api.defaults.withCredentials = true; // Ensure cookies are sent with requests  
+      api.get(`/api/users/me`)
+        .then((res) => {
+          if (res.data.id) {
+            dispatch({ type: SET_USER, user: res.data });
+          }
+        })
+        .catch((err) => console.error('Failed to fetch user:', err.message));
+    }
+  }, [state.user.id]);
 
   // --- Authentication ---
   const login = async (email, password) => {
   try {
+    api.defaults.withCredentials = true; // Ensure cookies are sent with requests
     const response = await api.post('/api/users/login', { email, password });
     dispatch({ type: SET_USER, user: response.data });
     return response;
