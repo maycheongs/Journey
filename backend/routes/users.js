@@ -25,7 +25,7 @@ export default ({
   router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
-      const user = await userHelpers.getUserByEmail(email);
+      const user = await getUserByEmail(email);
       if (!user || !bcrypt.compareSync(password, user.password)) {
         return res.status(401).json({ error: 'Invalid credentials' });
       }
@@ -106,7 +106,7 @@ export default ({
       return res.status(401).json({ error: 'Not authenticated' });
     }
     try {
-      const user = await userHelpers.getUserById(req.session.userId);
+      const user = await getUser(req.session.userId);
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
       }
