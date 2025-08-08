@@ -30,36 +30,39 @@ const app = express();
 const origin = process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : 'http://localhost:8000';
 console.log('CORS origin:', origin); //DEBUG
 
-app.use(cors({
-  origin,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+app.use(cors());
+app.use(session({ secret: 'keyboard cat', cookie: {}}))
 
-// Handle CORS preflight requests
-app.options('*', cors({
-  origin,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+// app.use(cors({
+//   origin,
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+// }));
 
-//for debug only remove later
+// // Handle CORS preflight requests
+// app.options('*', cors({
+//   origin,
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+// }));
 
-app.use(session({
-  name: 'session',
-  secret: 'your-secret-key',
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    secure: true, // must be true on Render (HTTPS)
-    partitioned: true, // for cross-site cookies
-    sameSite: 'none',
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000,
-  },
-}));
+// //for debug only remove later
+
+// app.use(session({
+//   name: 'session',
+//   secret: 'your-secret-key',
+//   resave: false,
+//   saveUninitialized: true,
+//   cookie: {
+//     secure: true, // must be true on Render (HTTPS)
+//     partitioned: true, // for cross-site cookies
+//     sameSite: 'none',
+//     httpOnly: true,
+//     maxAge: 24 * 60 * 60 * 1000,
+//   },
+// }));
 
 
 // app.use(session({
@@ -90,9 +93,9 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(helmet({
-  contentSecurityPolicy: false, // Disable CSP to avoid conflicts with CORS
-}));
+// app.use(helmet({
+//   contentSecurityPolicy: false, // Disable CSP to avoid conflicts with CORS
+// }));
 
 app.use('/api/users', usersRouter(userHelpers));
 app.use('/api/itineraries', apiRouter(apiHelpers));

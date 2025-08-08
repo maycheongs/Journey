@@ -30,13 +30,12 @@ export default ({
         return res.status(401).json({ error: 'Invalid credentials' });
       }
       req.session.userId = user.id;
-      req.session.modified = true; //force cookie-session to set cookie
+      // req.session.modified = true; //force cookie-session to set cookie
 
      
 
       // set a dummy cookie to test CORS      
       res.cookie('testcookie', 'value', {
-        userId: user.id,
         httpOnly: true,
         secure: true,
         sameSite: 'none',
