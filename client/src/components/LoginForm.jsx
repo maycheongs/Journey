@@ -49,6 +49,7 @@ export default function LoginForm(props) {
     props
       .onSave(userInfo.email.trim().toLowerCase(), userInfo.password)
       .then(res => {
+        console.log('Login response:',res, 'data', res.data); // Debug
         if (res.data.email) {
           setError({
             ...error,

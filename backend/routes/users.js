@@ -36,11 +36,11 @@ export default ({
      
 
       // set a dummy cookie to test CORS      
-      res.cookie('testcookie', 'value', {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-      });
+      // res.cookie('testcookie', 'value', {
+      //   httpOnly: true,
+      //   secure: true,
+      //   sameSite: 'none',
+      // });
       req.session.save((err) => {
         if (err) {
           console.error('Session save error:', err);
