@@ -18,7 +18,7 @@ export const api = axios.create({
   baseURL: import.meta.env.PROD
     ? import.meta.env.VITE_API_URL
     : undefined, // proxy works in dev
-  // withCredentials: true, // include cookies for CORS
+  withCredentials: true, // include cookies for CORS
 });
 
 api.interceptors.response.use(

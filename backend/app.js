@@ -78,6 +78,24 @@ app.use(session({ secret: 'keyboard cat', cookie: {}}))
 //   },
 // }));
 
+app.use(cors({
+  origin: '*',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+app.use(session({
+  name: 'connect.sid',
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    httpOnly: true,
+    path: '/',
+    maxAge: 24 * 60 * 60 * 1000,
+  },
+}));
+
 
 //middleware to log all response headers
 app.use((req, res, next) => {
