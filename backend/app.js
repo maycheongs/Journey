@@ -93,9 +93,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
-// app.use(helmet({
-//   contentSecurityPolicy: false, // Disable CSP to avoid conflicts with CORS
-// }));
+app.use(helmet());
 
 app.use('/api/users', usersRouter(userHelpers));
 app.use('/api/itineraries', apiRouter(apiHelpers));
