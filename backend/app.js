@@ -44,18 +44,46 @@ app.options('*', cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
+//for debug only remove later
+import session from 'express-session';
+
 app.use(session({
   name: 'session',
-  secret: 'a-secret-key',
+  secret: 'your-secret-key',
   resave: false,
   saveUninitialized: false,
-  cookie: { 
-    secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+  cookie: {
+    secure: true, // must be true on Render (HTTPS)
+    sameSite: 'none',
     httpOnly: true,
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-site cookies in production
-    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    maxAge: 24 * 60 * 60 * 1000,
   },
 }));
+
+
+// app.use(session({
+//   name: 'session',
+//   secret: 'a-secret-key',
+//   resave: false,
+//   saveUninitialized: false,
+//   cookie: { 
+//     secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+//     httpOnly: true,
+//     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-site cookies in production
+//     maxAge: 24 * 60 * 60 * 1000, // 1 day
+//   },
+// }));
+
+
+//middleware to log all response headers
+app.use((req, res, next) => {
+  const originalEnd = res.end;
+  res.end = function (...args) {
+    console.log('➡️ Response headers:', res.getHeaders());
+    originalEnd.apply(res, args);
+  };
+  next();
+});
  
 app.use(logger('dev'));
 app.use(express.json());
@@ -78,17 +106,6 @@ app.use((err, req, res, next) => {
     stack: process.env.NODE_ENV !== 'production' ? err.stack : undefined,
   });
 });
-
-//middleware to log all response headers
-app.use((req, res, next) => {
-  const originalEnd = res.end;
-  res.end = function (...args) {
-    console.log('➡️ Response headers:', res.getHeaders());
-    originalEnd.apply(res, args);
-  };
-  next();
-});
-
 
 
 export function setupSocketIO(server, app) {

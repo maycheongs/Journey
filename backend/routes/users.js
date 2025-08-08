@@ -34,13 +34,13 @@ export default ({
 
       console.log('Login - Session set:', req.session, 'User ID:', user.id, 'Cookies:', req.headers.cookie); // Debug
 
-      //set a dummy cookie to test CORS      
-      // res.cookie('testcookie', 'value', {
-      //   userId: user.id,
-      //   httpOnly: true,
-      //   secure: true,
-      //   sameSite: 'none',
-      // });
+      // set a dummy cookie to test CORS      
+      res.cookie('testcookie', 'value', {
+        userId: user.id,
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      });
       res.json({ id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name });
     } catch (err) {
       console.error('Login error:', err);
