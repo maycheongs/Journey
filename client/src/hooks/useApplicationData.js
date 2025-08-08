@@ -22,7 +22,10 @@ export const api = axios.create({
 });
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('Response:', response.config.method, response.config.url, 'Cookies:', document.cookie, 'Set-Cookie:', response.headers['set-cookie']); // Debug
+    return response;
+  },
   (error) => {
     console.error('API Error:', error.response?.data || error.message);
     return Promise.reject(error);
@@ -34,7 +37,7 @@ export default function useApplicationData() {
   const persistedUser = JSON.parse(localStorage.getItem('user') || '{}');
 
   const [state, dispatch] = useReducer(dataReducer, {
-    user: persistedUser,
+    user: persistedUser || {},
     itinerary: null,
     myItineraries: [],
     bookmarks: [],
@@ -93,7 +96,7 @@ export default function useApplicationData() {
 const login = async (email, password) => {
   try {
     const response = await api.post('/api/users/login', { email, password });
-    console.log('Login response:', response.data, 'Cookies:', document.cookie); // Debug
+    console.log('Login response:', response.data, 'Cookies:', document.cookie, 'Set-Cookie:', response.headers['set-cookie']); // Debug
     dispatch({ type: SET_USER, user: response.data });
     localStorage.setItem('user', JSON.stringify(response.data));
     return response.data;

@@ -51,9 +51,10 @@ app.use(session({
   name: 'session',
   secret: 'your-secret-key',
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true,
   cookie: {
     secure: true, // must be true on Render (HTTPS)
+    partitioned: true, // for cross-site cookies
     sameSite: 'none',
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,
