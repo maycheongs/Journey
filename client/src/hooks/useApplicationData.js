@@ -109,7 +109,7 @@ const login = async (email, password) => {
   // --- Itinerary CRUD ---
   useEffect(() => {
     if (state.user.id) {
-      if (import.meta.env.DEBUG_SESSION === 'true') console.log('Fetching itineraries for user ID:', state.user.id); // Debug
+      if (import.meta.env.DEBUG === 'true') console.log('Fetching itineraries for user ID:', state.user.id); // Debug
       api.get(`/api/users/${state.user.id}/itineraries`).then(res => {
         const myItineraries = res.data;
 

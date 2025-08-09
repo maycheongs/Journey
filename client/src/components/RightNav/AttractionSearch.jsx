@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Checkbox from './Checkbox';
-import axios from 'axios';
+import { api } from '../../hooks/useApplicationData.js'
 import AttractionsListItem from './AttractionsListItem';
 
 export default function AttractionSearch(props) {
@@ -34,7 +34,8 @@ export default function AttractionSearch(props) {
   useEffect(() => {
     setSearchTerms({ location: currentLocation, name: '' });
 
-    axios.get(`/api/attractions/${currentLocation}/null/null`).then(res => {
+    api.get(`/api/attractions/${currentLocation}/null/null`).then(res => {
+      import.meta.env.DEBUG === 'true' && console.log('Fetched Attractions from Attraction Search:', res.data)
       setAttractionList(res.data);
 
       setView(SHOW);
