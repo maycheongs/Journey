@@ -96,6 +96,7 @@ app.use(session({
     httpOnly: true,
     path: '/',
     maxAge: 24 * 60 * 60 * 1000,
+    sameSite: 'none', // for cross-site cookies
   },
 }));
 
