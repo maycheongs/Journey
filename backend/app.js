@@ -79,7 +79,7 @@ app.use(session({ secret: 'keyboard cat', cookie: {}}))
 // }));
 
 app.use(cors({
-  origin: '*',
+  origin: 'https://journey-ncho.onrender.com',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
