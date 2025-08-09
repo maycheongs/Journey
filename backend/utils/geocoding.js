@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 import path from 'path';
 
 if (process.env.NODE_ENV !== 'production') {
-// Calculate the absolute path to the root .env file in development
-dotenv.config({ path: path.resolve(process.cwd(), '../.env') });
+    // Calculate the absolute path to the root .env file in development
+    dotenv.config({ path: path.resolve(process.cwd(), '../.env') });
 }
 
 // Import the API key FOR opentripmap from env.
@@ -47,10 +47,11 @@ const getCoordinatesByLocationName = async (searchString) => {
 
     const placeName = parts[0];
     const adminTerms = parts.slice(1)
+    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(placeName)}&count=10&language=en&format=json`
 
     // Query Open-Meteo's geocoding API
     try {
-        const response = await axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(placeName)}&count=10&language=en&format=json`,
+        const response = await axios.get(url,
             { timeout: 5000 });
         let matches = response.data.results;
         if (!matches || !matches.length) {
@@ -74,9 +75,9 @@ const getCoordinatesByLocationName = async (searchString) => {
     catch (error) {
 
         if (error.response) {
-            throw new Error(`API  error: ${error.response.status} - ${error.message}`)
+            throw new Error(`API  error: ${error.response.status} - ${error.message}, at URL: ${url}`)
         } else if (error.request) {
-            throw new Error(`Network error: Unable to reach the API - ${error.message}`);
+            throw new Error(`Network error: Unable to reach the API - ${error.message} at URL: ${url}`);
         } else {
             throw new Error(`Processing error at getCoordinatesByLocationName: ${error.message}`);
         }
@@ -85,9 +86,9 @@ const getCoordinatesByLocationName = async (searchString) => {
 }
 
 const getReadableAddressByCoordinates = async (latitude, longitude) => {
-    try {
 
-        const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`;
+    const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`;
+    try {
 
         const response = await axios.get(url, {
             timeout: 5000,
@@ -101,9 +102,9 @@ const getReadableAddressByCoordinates = async (latitude, longitude) => {
         return address || 'Address not found';
     } catch (error) {
         if (error.response) {
-            throw new Error(`Nominatim API error: ${error.response.status} - ${error.message}`);
+            throw new Error(`Nominatim API error: ${error.response.status} - ${error.message}, at URL: ${url}`);
         } else if (error.request) {
-            throw new Error(`Network error: Unable to reach Nominatim API - ${error.message}`);
+            throw new Error(`Network error: Unable to reach Nominatim API - ${error.message} at URL: ${url}`);
         } else {
             throw new Error(`Processing error at getReadableAddressByCoordinates: ${error.message}`);
         }
@@ -114,7 +115,7 @@ const getReadableAddressByCoordinates = async (latitude, longitude) => {
 const getDetailsByAttractionId = async (xId) => {
     const url = `https://api.opentripmap.com/0.1/en/places/xid/${xId}?apikey=${OTM_API_KEY}`
     try {
-        
+
 
         const response = await axios.get(url, { timeout: 5000 });
 
@@ -144,7 +145,7 @@ const getDetailsByAttractionId = async (xId) => {
         if (error.response) {
             throw new Error(`OpenTripMap API DETAILS error: ${error.response.status} - ${error.message} url: ${url}`);
         } else if (error.request) {
-            throw new Error(`Network error: Unable to reach OpenTripMap API DETAILS - ${error.message}`);
+            throw new Error(`Network error: Unable to reach OpenTripMap API DETAILS - ${error.message} at URL:  ${url}`);
         } else {
             throw new Error(`Processing error fetching details: ${error.message}`);
         }
@@ -163,16 +164,13 @@ function convertWikimediaUrl(url) {
 // Updated getAttractionsByLocationName with country filtering
 const getAttractions = async (searchString, options = {}) => {
     const { radius = 20000, category, limit = 50, rate = 1, query } = options;
+    // Get coordinates and country code
+    const location = await getCoordinatesByLocationName(searchString);
+    const { latitude, longitude, country_code } = location;
+    const searchTerm = query ? `&name=${encodeURIComponent(query)}` : '';
+    const url = `https://api.opentripmap.com/0.1/en/places/radius?radius=${radius}&lon=${longitude}&lat=${latitude}&kinds=${category}&limit=${limit}&rate=${rate}${searchTerm}&format=json&apikey=${OTM_API_KEY}`;
     try {
-        // Get coordinates and country code
-        const location = await getCoordinatesByLocationName(searchString);
-        const { latitude, longitude, country_code } = location;
-        const searchTerm = query ? `&name=${encodeURIComponent(query)}` : '';
-
         // Query OpenTripMap API
-
-        const url = `https://api.opentripmap.com/0.1/en/places/radius?radius=${radius}&lon=${longitude}&lat=${latitude}&kinds=${category}&limit=${limit}&rate=${rate}${searchTerm}&format=json&apikey=${OTM_API_KEY}`;
-
         const response = await axios.get(url, { timeout: 8000 });
 
         let attractions = response.data || []
@@ -191,7 +189,6 @@ const getAttractions = async (searchString, options = {}) => {
 
 
         //Keep requests under the 2 req/sec limit
-
         const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
         const attractionDetails = [];
         for (const feature of attractions) {
@@ -205,9 +202,9 @@ const getAttractions = async (searchString, options = {}) => {
 
     } catch (error) {
         if (error.response) {
-            throw new Error(`OpenTripMap API error: ${error.response.status} - ${error.message}`);
+            throw new Error(`OpenTripMap API error: ${error.response.status} - ${error.message} at URL: ${url}`);
         } else if (error.request) {
-            throw new Error(`Network error: Unable to reach OpenTripMap API - ${error.message}`);
+            throw new Error(`Network error: Unable to reach OpenTripMap API - ${error.message} at URL: ${url}`);
         } else {
             throw new Error(`Processing error at getAttractions: ${error.message}`);
         }
