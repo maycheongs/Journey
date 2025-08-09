@@ -30,8 +30,8 @@ const app = express();
 const origin = process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : 'http://localhost:8000';
 console.log('CORS origin:', origin); //DEBUG
 
-app.use(cors());
-app.use(session({ secret: 'keyboard cat', cookie: {}}))
+// app.use(cors());
+// app.use(session({ secret: 'keyboard cat', cookie: {}}))
 
 // app.use(cors({
 //   origin,
