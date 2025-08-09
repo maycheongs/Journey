@@ -23,7 +23,6 @@ export const api = axios.create({
 
 api.interceptors.response.use(
   (response) => {
-    console.log('Response:', response.config.method, response.config.url, 'Cookies:', document.cookie, 'Set-Cookie:', response.headers['set-cookie']); // Debug
     return response;
   },
   (error) => {
@@ -71,11 +70,9 @@ export default function useApplicationData() {
   // Fetch user on initial mount if not loaded
   useEffect(() => {
   const checkUser = async () => {
-    const storedUser = localStorage.getItem('user');
-    console.log('Initial check - localStorage user:', storedUser); // Debug
+    const storedUser = localStorage.getItem('user'); 
     try {
       const response = await api.get('/api/users/me');
-      console.log('Fetched user from /me:', response.data); // Debug
       if (response.data.id) {
         dispatch({ type: SET_USER, user: response.data });
         localStorage.setItem('user', JSON.stringify(response.data));
@@ -96,7 +93,6 @@ export default function useApplicationData() {
 const login = async (email, password) => {
   try {
     const response = await api.post('/api/users/login', { email, password });
-    console.log('Login response:', response.data, 'Cookies:', document.cookie, 'Set-Cookie:', response.headers['set-cookie']); // Debug
     dispatch({ type: SET_USER, user: response.data });
     localStorage.setItem('user', JSON.stringify(response.data));
     return response;
@@ -113,7 +109,7 @@ const login = async (email, password) => {
   // --- Itinerary CRUD ---
   useEffect(() => {
     if (state.user.id) {
-      console.log('Fetching itineraries for user ID:', state.user.id); // Debug
+      if (import.meta.env.DEBUG_SESSION === 'true') console.log('Fetching itineraries for user ID:', state.user.id); // Debug
       api.get(`/api/users/${state.user.id}/itineraries`).then(res => {
         const myItineraries = res.data;
 

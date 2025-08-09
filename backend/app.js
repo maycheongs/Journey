@@ -28,58 +28,9 @@ const app = express();
 
 // CORS configuration
 const origin = process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : 'http://localhost:8000';
-console.log('CORS origin:', origin); //DEBUG
-
-// app.use(cors());
-// app.use(session({ secret: 'keyboard cat', cookie: {}}))
-
-// app.use(cors({
-//   origin,
-//   credentials: true,
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//   allowedHeaders: ['Content-Type', 'Authorization'],
-// }));
-
-// // Handle CORS preflight requests
-// app.options('*', cors({
-//   origin,
-//   credentials: true,
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//   allowedHeaders: ['Content-Type', 'Authorization'],
-// }));
-
-// //for debug only remove later
-
-// app.use(session({
-//   name: 'session',
-//   secret: 'your-secret-key',
-//   resave: false,
-//   saveUninitialized: true,
-//   cookie: {
-//     secure: true, // must be true on Render (HTTPS)
-//     partitioned: true, // for cross-site cookies
-//     sameSite: 'none',
-//     httpOnly: true,
-//     maxAge: 24 * 60 * 60 * 1000,
-//   },
-// }));
-
-
-// app.use(session({
-//   name: 'session',
-//   secret: 'a-secret-key',
-//   resave: false,
-//   saveUninitialized: false,
-//   cookie: { 
-//     secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-//     httpOnly: true,
-//     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-site cookies in production
-//     maxAge: 24 * 60 * 60 * 1000, // 1 day
-//   },
-// }));
 
 const corsOptions = {
-  origin: 'https://journey-ncho.onrender.com',
+  origin,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -97,7 +48,6 @@ app.use(session({
   cookie: {
     secure: true,
     httpOnly: true,
-    path: '/',
     maxAge: 24 * 60 * 60 * 1000,
     sameSite: 'none', // for cross-site cookies
   },
@@ -105,7 +55,9 @@ app.use(session({
 
 
 // Debug middleware
-app.use((req, res, next) => {
+
+if (process.env.DEBUG_SESSION === 'true') {
+  app.use((req, res, next) => {
   console.log('Incoming request:', req.method, req.url, 
     'Session:', req.session, 'Cookies:', req.headers.cookie, 'SessionID:', req.sessionID, 
     'Secure:', req.secure, 'Protocol:', req.protocol, 'X-Forwarded-Proto:', req.get('x-forwarded-proto'));
@@ -118,6 +70,8 @@ app.use((req, res, next) => {
   };
   next();
 });
+}
+
  
 app.use(logger('dev'));
 app.use(express.json());
@@ -142,7 +96,7 @@ app.use((err, req, res, next) => {
 
 export function setupSocketIO(server, app) {
   const socketOrigin = process.env.NODE_ENV === 'production' ? [process.env.FRONTEND_URL] : ['http://localhost:8000', 'http://127.0.0.1:8000'];
-  console.log('Socket.io CORS origin:', socketOrigin); // Debug
+  if (process.env.DEBUG_SESSION === 'true') console.log('Socket.io CORS origin:', socketOrigin);
   const io = new SocketIO(server, {
     cors: {
       origin: socketOrigin,
