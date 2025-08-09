@@ -183,8 +183,6 @@ const getAttractions = async (searchString, options = {}) => {
             attractions = attractions.slice(0, 10); // Limit results to the specified number
         }
 
-
-
         // Dynamic radius adjustment (optional)
         if (attractions.length < 5 && radius < 30000) {
             console.log(`Found only ${attractions.length} attractions, increasing radius to ${radius + 5000}`);
@@ -221,7 +219,6 @@ const getAttractions = async (searchString, options = {}) => {
 const parseLocationName = async (location_name) => {
     const location = await getCoordinatesByLocationName(location_name);
 
-    console.log(`Location name: ${location.name}, ${location.country_code}`);
     return `${location.name}, ${location.country_code}`;
 }
 

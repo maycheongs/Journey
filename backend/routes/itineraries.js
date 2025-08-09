@@ -688,9 +688,7 @@ export default ({
       addTripNote(itinerary_id, note, important),
       getTripNotes(itinerary_id),
     ]).then(([result, trip_notes]) => {
-      if (result.message) {
-        console.log(result.message);
-      }
+      import.meta.env.DEBUG_SESSION === 'true' && console.log('Trip note added:', result?.message);
       const io = req.app.get('socketio');
       io.sockets
         .in(Number(itinerary_id))
@@ -704,9 +702,7 @@ export default ({
 
     Promise.all([deleteTripNote(note_id), getTripNotes(itinerary_id)]).then(
       ([result, trip_notes]) => {
-        if (result.message) {
-          console.log(result.message);
-        }
+        import.meta.env.DEBUG_SESSION === 'true' && console.log('Trip note added:', result?.message);
         const io = req.app.get('socketio');
         io.sockets
           .in(Number(itinerary_id))
@@ -723,9 +719,7 @@ export default ({
       editTripNote(note_id, note, important),
       getTripNotes(itinerary_id),
     ]).then(([result, trip_notes]) => {
-      if (result.message) {
-        console.log(result.message);
-      }
+      import.meta.env.DEBUG_SESSION === 'true' && console.log('Trip note added:', result?.message);
       const io = req.app.get('socketio');
       io.sockets
         .in(Number(itinerary_id))

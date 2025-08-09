@@ -127,7 +127,7 @@ export default ({
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
       }
-      console.log('GET /me - User:', user); // Debug
+      console.log('GET /me - User:', user); 
       res.json({ id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name });
     } catch (err) {
       console.error('Get user error:', err);
@@ -145,7 +145,6 @@ export default ({
       const result = await getItinerariesForGroup(user_id);
       res.send(result);
     } catch (err) {
-      console.log('Error fetching itineraries:', err);
       res.status(500).json({ error: 'Failed to fetch itineraries' });
     }
 
