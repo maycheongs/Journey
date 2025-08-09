@@ -85,6 +85,8 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
+app.set('trust proxy', 1); // trust first proxy for secure cookies in production
+
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions)); // handle preflight
 app.use(session({
@@ -93,7 +95,7 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
   cookie: {
-    secure: true,
+    // secure: true,
     httpOnly: true,
     path: '/',
     maxAge: 24 * 60 * 60 * 1000,
@@ -102,9 +104,11 @@ app.use(session({
 }));
 
 
-//middleware to log all response headers
+// Debug middleware
 app.use((req, res, next) => {
-  console.log('Incoming request:', req.method, req.url, 'Session:', req.session, 'Cookies:', req.headers.cookie, 'SessionID:', req.sessionID);
+  console.log('Incoming request:', req.method, req.url, 
+    'Session:', req.session, 'Cookies:', req.headers.cookie, 'SessionID:', req.sessionID, 
+    'Secure:', req.secure, 'Protocol:', req.protocol, 'X-Forwarded-Proto:', req.get('x-forwarded-proto'));
   const originalSetHeader = res.setHeader;
   res.setHeader = function (name, value) {
     if (name.toLowerCase() === 'set-cookie') {
@@ -119,7 +123,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(helmet());
+app.use(helmet({contentSecurityPolicy: false})); // Disable CSP for now, can be configured later
 
 app.use('/api/users', usersRouter(userHelpers));
 app.use('/api/itineraries', apiRouter(apiHelpers));
