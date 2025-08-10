@@ -20,6 +20,7 @@ import Bookmarks from './components/Bookmarks';
 import ManageAccount from './components/ManageAccount';
 import EditItineraryForm from './components/EditItineraryForm';
 import RightNav from './components/RightNav/RightNav';
+import BackendStatus from './components/BackendStatus';
 
 function App() {
   const {
@@ -57,6 +58,7 @@ function App() {
 
   return (
     <Router>
+      {import.meta.env.PROD && <BackendStatus />}
       <Nav user={user} logout={logout} dispatch={dispatch} />
       <Routes>
         <Route path="/" element={<Home />} />

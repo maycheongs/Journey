@@ -79,6 +79,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(helmet({contentSecurityPolicy: false})); // Disable CSP for now, can be configured later
 
+app.get('/wake', (req,res) => {
+  res.json({
+    awake: true,
+    time: new Date().toISOString()
+  })
+})
+
 app.use('/api/users', usersRouter(userHelpers));
 app.use('/api/itineraries', apiRouter(apiHelpers));
 app.use('/api/attractions', searchRouter(searchHelpers));
