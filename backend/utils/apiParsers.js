@@ -9,7 +9,7 @@ const itineraryObj = (resultArr) => {
     creator_id,
     start_date,
     end_date,
-  } = resultArr[0];
+  } = resultArr[0] || {};
 
   const itinerary = {
     id,
@@ -23,7 +23,7 @@ const itineraryObj = (resultArr) => {
     end_date,
     locations: [],
   };
-  if (resultArr[0].location_id) {
+  if (resultArr[0]?.location_id) {
     const dayObjs = [];
     resultArr.forEach((item) => {
       if (!dayObjs.some((day) => day.id === item.day_id)) {
@@ -76,6 +76,7 @@ const itineraryObj = (resultArr) => {
 
   return itinerary;
 };
+
 const parseTravelParty = (party) => {
   return party.map((user) => ({
     id: user.user_id,
