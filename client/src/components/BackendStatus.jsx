@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 
 function BackendStatus() {
-  const [backendStatus, setBackendStatus] = useState('Checking...');
+  const [backendStatus, setBackendStatus] = useState('Waking up backend...');
   const [awake, setAwake] = useState(false);
   const [visible, setVisible] = useState(true)
+
 
   useEffect(() => {
     if (!import.meta.env.PROD) return; // skip in dev
@@ -28,7 +29,7 @@ function BackendStatus() {
     // first check immediately
     checkBackend();
 
-    // keep checking every 5s until awake
+    // keep pinging every 5s until awake
     const interval = setInterval(() => {
       if (!awake) checkBackend();
     }, 5000);
