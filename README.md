@@ -2,12 +2,12 @@
 
 ## About
 
-Journey is a single page app for creating trip itineraries for groups in real time, and browsing public itineraries for inspiration.
+Journey is a single-page app for creating trip itineraries for groups in real time and browsing public itineraries for inspiration. This is a forked and updated version of the original project, with modernized dependencies, improved session management, and deployment to Render for backend and frontend services.
 
 ## Tech Stack
 
-Front-end: React and TailwindCSS  
-Back-end: Express, Node.js, PostgreSQL and Socket.io
+- Front-end: React, Vite (for development and build), TailwindCSS, Socket.io-client (for real-time collaboration), React Router (for navigation), React-to-Print (for printing itineraries), Axios (for API requests), and Storybook (for component development and testing).
+- Back-end: Express (web framework), Node.js (runtime), PostgreSQL (database), Socket.io (for real-time features), express-session (for session management), bcrypt (for password hashing), helmet (for security headers), and Axios (for API requests).
 
 ## Final Product
 
@@ -17,17 +17,44 @@ Back-end: Express, Node.js, PostgreSQL and Socket.io
 ![overview](docs/overview.png)
 ![print](docs/print.png)
 
-## Getting Started
+## Getting Started 
 
-1. Create the `.env` by using `.env.example` as a reference
+### See it in production!
+1. Visit https://journey-ncho.onrender.com
+Note: It could take a few minutes for the server/ backend to wake up.
 
-- Sign up for Triposo API Key (https://www.triposo.com/api/signup)
+### Development Mode
+1. Clone the repository and navigate to the project directory.
+2. Create the `.env` by using `.env.example` as a reference
 
-2. Install dependencies: `npm i`
-3. Reset database (using Node v10.20.x): `npm run db:reset`
-4. Start back-end server: `npm start` (or `npm run dev` to run in dev mode with nodemon integration)
-5. Start the client/front-end server: `npm start`
-6. Visit `http://localhost:8000/`
+- Sign up at Open Trip Maps (https://dev.opentripmap.org/register), add API key to .env
+- Set up PostgreSQL either locally or online and enter the respective variable/s to the .env
+  
+3. Install dependencies:
+
+   - **Backend:**  
+     ```bash
+     cd backend && npm i
+     ```
+   
+   - **Frontend:**  
+     ```bash
+     cd client && npm i
+     ```
+
+4. Reset the database (using Node v10.20.x or compatible):  
+   ```bash
+   cd backend && npm run db:reset
+   ```
+5. Start the backend server:  
+   ```bash
+   cd backend && npm start
+   ```
+6. Start the frontend server:
+   ```bash
+   cd client && npm run dev
+   ```
+7. Visit http://localhost:5173/ (default Vite port; check console for exact URL).
 
 ## Tips
 
@@ -38,29 +65,38 @@ Back-end: Express, Node.js, PostgreSQL and Socket.io
 
 ### Client
 
-- Node (14.X) for React
-- Axios (0.21.X)
-- React (17.X)
-- Socket.io-client (4.X)
-- Craco (6.1.X)
-- emailjs-com (2.6.X)
-- react-router-dom (5.2.X)
-- react-to-print (2.12.X)
+- Node (18.x+) for React and Vite
+- axios (1.7.x)
+- emailjs-com (3.2.x)
+- react (18.2.x)
+- react-dom (18.2.x)
+- react-router-dom (6.24.x)
+- react-to-print (2.15.x)
+- socket.io-client (4.7.x)
+- web-vitals (4.2.x)
+
+> Dev dependencies include TailwindCSS plugins, Storybook addons, testing libraries (e.g., @testing-library/react), Vite plugins, ESLint, and PostCSS.
 
 ### Back-end Server
 
-- Node (14.X) for Express Server
-- Node (10.20.X) for PostgreSQL
-- Express (4.16.X)
-- Axios (0.21.X)
-- Socket.io (4.X)
-- bcrypt (5.0.X)
-- cookie-session (1.4.X)
-- helmet (4.4.X)
-- pg (8.5.X)
-- pg-native (3.0.X)
+- Node (18.x+) for Express  
+- axios (1.6.x)  
+- bcrypt (5.1.x)  
+- chalk (5.5.x)  
+- cors (2.8.x)  
+- debug (4.3.x)  
+- dotenv (17.2.x)  
+- express (4.19.x)  
+- express-session (1.18.x)  
+- helmet (7.0.x)  
+- morgan (1.10.x)  
+- pg (8.11.x)  
+- socket.io (4.7.x)  
+
+> Dev dependencies include nodemon (3.1.x) for development.
 
 ## External APIs
 
-- Triposo
+- Open Trip Maps
+- Open Meteo - Geocoding
 - Nominatum
