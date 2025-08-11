@@ -2,7 +2,7 @@
 
 ## About
 
-Journey is a single-page app for creating trip itineraries for groups in real time and browsing public itineraries for inspiration. This is a forked and updated version of the original project, with modernized dependencies, improved session management, and deployment to Render for backend and frontend services.
+Journey is a single-page app for creating trip itineraries for groups in real time and browsing public itineraries for inspiration. This is a updated version of the original project, with modernized dependencies, improved build and session management, and deployment to Render for backend and frontend services.
 
 ## Tech Stack
 
