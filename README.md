@@ -6,7 +6,7 @@ Journey is a single-page app for creating trip itineraries for groups in real ti
 
 ## Tech Stack
 
-- Front-end: React, Vite (for development and build), TailwindCSS, Socket.io-client (for real-time collaboration), React Router (for navigation), React-to-Print (for printing itineraries), Axios (for API requests), and Storybook (for component development and testing).
+- Front-end: React, Vite (for development and build), TailwindCSS, Socket.io-client (for real-time collaboration), React Router (for navigation), React-to-Print (for printing itineraries), Axios (for API requests), and Storybook (for component development and testing). Wire-framed on Figma.
 - Back-end: Express (web framework), Node.js (runtime), PostgreSQL (database), Socket.io (for real-time features), express-session (for session management), bcrypt (for password hashing), helmet (for security headers), and Axios (for API requests).
 
 ## Final Product
