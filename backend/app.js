@@ -79,11 +79,32 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(helmet({contentSecurityPolicy: false})); // Disable CSP for now, can be configured later
 
-app.get('/wake', (req,res) => {
-  res.json({
+app.get('/wake', async (req, res) => {
+  const status = {
     awake: true,
-    time: new Date().toISOString()
-  })
+    time: new Date().toISOString(),
+    database: {
+      connected: false,
+      message: 'Unknown'
+    }
+  };
+
+  // Test database connection
+  try {
+    const result = await db.query('SELECT 1 as test');
+    if (result && result.rows && result.rows.length > 0) {
+      status.database.connected = true;
+      status.database.message = 'Connected to database';
+    } else {
+      status.database.message = 'Database query returned no results';
+    }
+  } catch (err) {
+    status.database.connected = false;
+    status.database.message = `Database connection failed: ${err.message}`;
+    console.error('Database connection test failed:', err);
+  }
+
+  res.json(status);
 })
 
 app.use('/api/users', usersRouter(userHelpers));

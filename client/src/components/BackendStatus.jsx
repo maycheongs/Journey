@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 function BackendStatus() {
   const [backendStatus, setBackendStatus] = useState('Waking up backend...');
   const [awake, setAwake] = useState(false);
+  const [databaseStatus, setDatabaseStatus] = useState('');
   const [visible, setVisible] = useState(true)
 
 
@@ -16,13 +17,31 @@ function BackendStatus() {
           if (data.awake) {
             setAwake(true);
             setBackendStatus(`Backend awake ✅ (${data.time})`);
-            setTimeout(() => setVisible(false), 2000)
+            
+            // Display database status
+            if (data.database) {
+              if (data.database.connected) {
+                setDatabaseStatus(`Database: ${data.database.message} ✅`);
+              } else {
+                setDatabaseStatus(`Database: ${data.database.message} ❌`);
+              }
+            }
+            
+            // Hide status after 5 seconds if both backend and database are good
+            if (data.database?.connected) {
+              setTimeout(() => setVisible(false), 5000);
+            } else {
+              // Keep visible if database is not connected
+              setTimeout(() => setVisible(false), 10000);
+            }
           } else {
             setBackendStatus('Backend sleeping ❌ Retrying...');
+            setDatabaseStatus('');
           }
         })
         .catch(() => {
           setBackendStatus('Backend sleeping ❌ Retrying...');
+          setDatabaseStatus('');
         });
     };
 
@@ -39,7 +58,12 @@ function BackendStatus() {
 
   if (!visible) return null
 
-  return <p>{backendStatus}</p>;
+  return (
+    <div>
+      <p>{backendStatus}</p>
+      {databaseStatus && <p>{databaseStatus}</p>}
+    </div>
+  );
 }
 
 export default BackendStatus;
